@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Aristotle API v1");
     });
 
-    const string url = "http://localhost:5155/swagger/index.html"; 
+    const string url = "http://localhost:3000/swagger/index.html"; 
     _ = Task.Run(() =>
     {
         try
