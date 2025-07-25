@@ -33,9 +33,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Aristotle API v1");
+        c.DocumentTitle = "Aristotle API Documentation";
     });
 
-    const string url = "http://localhost:3000/swagger/index.html"; 
+    const string url = "http://localhost:3000/swagger/index.html";
     _ = Task.Run(() =>
     {
         try

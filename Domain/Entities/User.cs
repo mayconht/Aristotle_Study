@@ -35,12 +35,14 @@ public class User
     /// <summary>
     /// User Name.
     /// </summary>
-    [Required] public string Name { get; init; }
+    [Required]
+    public string Name { get; init; }
 
     /// <summary>
     /// User Email.
     /// </summary>
-    [Required] public string Email { get; init; }
+    [Required]
+    public string Email { get; init; }
 
     /// <summary>
     /// User Date of Birth.

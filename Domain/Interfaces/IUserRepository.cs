@@ -15,23 +15,27 @@ public interface IUserRepository
     /// <param name="id"></param>
     /// <returns></returns>
     Task<User?> GetByIdAsync(Guid id);
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
     Task<IEnumerable<User>> GetAllAsync();
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
     Task<User> AddAsync(User user);
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
     Task<User> UpdateAsync(User user);
+
     /// <summary>
     /// 
     /// </summary>

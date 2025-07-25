@@ -50,7 +50,7 @@ public class UserService
     /// <returns></returns>
     public async Task<User> CreateUserAsync(User user)
     {
-       return await _userRepository.AddAsync(user);
+        return await _userRepository.AddAsync(user);
     }
 
     /// <summary>
