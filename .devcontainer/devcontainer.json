@@ -43,7 +43,7 @@
 //				"ms-playwright.playwright"
 			]
 		},
-		// rider configurations
+		// rider configurations - I personally don't recommend using Rider in a dev container,
 //		Rider is heavy when running for the first time, so it is recommended to use VS Code instead.
 //		The limitations are only on remote development, so you can still use Rider locally.
 		// More info: https://www.jetbrains.com/help/rider/Connect_to_DevContainer.html
