@@ -3,7 +3,6 @@
 simple ASP.NET Core Web API for learning Entity Framework Core and NSwagger with SQlite.
 Keep in mind that this is a simple project for educational purposes and many many improvements can be made.
 
-
 ### Prerequisites
 
 - [Visual Studio Code](https://code.visualstudio.com/)

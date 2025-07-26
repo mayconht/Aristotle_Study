@@ -4,17 +4,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Aristotle.Infrastructure;
 
 /// <summary>
-/// 
+/// Context class for the application.
 /// </summary>
 public class ApplicationDbContext : DbContext
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="options"></param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
 
     //Any domain or entity that you want to persist in the database should be added here
     //This is the DbSet for the User entity, it literally means "table" in the database
@@ -24,9 +17,20 @@ public class ApplicationDbContext : DbContext
     /// 
     /// </summary>
     public DbSet<User> Users { get; set; }
+    
+    /// <summary>
+    /// Constructor for the ApplicationDbContext class.
+    /// </summary>
+    /// <param name="options"></param>
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+        // This constructor is used to pass the options to the base class
+        // It is required for dependency injection to work properly
+    }
 
     /// <summary>
-    /// 
+    /// Configures the model for the application.
     /// </summary>
     /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +38,7 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Here I am going agains the DRY principle, just to show how we can configure the User entity here as well
+        // Or keep it in the User class
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.Id);

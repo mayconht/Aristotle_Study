@@ -9,14 +9,12 @@ namespace Aristotle.Domain.Entities;
 
 /// <summary>
 /// A user entity representing a person in the system.
-/// This class is used to store user information such as name, email, and date of birth
 /// </summary>
 [Table("Users")]
 public class User
 {
     /// <summary>
     /// User constructor.
-    /// This constructor initializes a new instance of the User class with the specified email and name.
     /// </summary>
     /// <param name="email"></param>
     /// <param name="name"></param>
@@ -28,7 +26,6 @@ public class User
 
     /// <summary>
     /// User Generated Id.
-    /// This property is the unique identifier for the user.
     /// </summary>
     public Guid Id { get; init; }
 

@@ -2,6 +2,7 @@ using Aristotle.Application.Service;
 using Aristotle.Domain.Interfaces;
 using Aristotle.Infrastructure;
 using Aristotle.Infrastructure.Data.Repositories;
+using Aristotle.Infrastructure.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -53,6 +54,10 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+// We are going to move this to a middleware handler or a service handler later.
+// But feels useful to register the services like this in C# 
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.MapControllers();
