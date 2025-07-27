@@ -1,4 +1,4 @@
-﻿namespace Aristotle.Infrastructure.Exceptions;
+namespace Aristotle.Infrastructure.Exceptions;
 
 /// <summary>
 /// Base exception class for infrastructure-related exceptions.

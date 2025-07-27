@@ -1,4 +1,4 @@
-﻿using Aristotle.Domain.Entities;
+using Aristotle.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aristotle.Infrastructure;

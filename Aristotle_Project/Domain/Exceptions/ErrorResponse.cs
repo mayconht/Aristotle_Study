@@ -1,4 +1,4 @@
-﻿namespace Aristotle.Domain.Exceptions;
+namespace Aristotle.Domain.Exceptions;
 
 /// <summary>
 /// Represents a standardized error response following RFC 7807 Problem Details for HTTP APIs.
