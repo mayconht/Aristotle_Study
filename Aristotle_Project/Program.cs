@@ -5,6 +5,7 @@ using Aristotle.Infrastructure.Data.Repositories;
 using Aristotle.Infrastructure.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,4 +63,14 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 
-app.RunAsync();
+// Check if this is being called from a test environment
+// In test scenarios, we don't want to start the web server
+var isTestEnvironment = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null || 
+                       args.Contains("--test") ||
+                       (Assembly.GetEntryAssembly()?.GetName().Name?.Contains("testhost") ?? false);
+
+if (!isTestEnvironment)
+{
+    await app.RunAsync();
+}
+}
