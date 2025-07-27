@@ -62,4 +62,4 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 
-await app.RunAsync();
+app.RunAsync();
