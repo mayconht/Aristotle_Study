@@ -47,8 +47,8 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserByEmail(string email)
     {
-        _logger.LogInformation("Received request to get user by email: {Email}", email);    
-        
+        _logger.LogInformation("Received request to get user by email: {Email}", email);
+
 
         var user = await _userService.GetUserByEmailAsync(email);
         if (user == null)
@@ -56,10 +56,11 @@ public class UserController : ControllerBase
             _logger.LogInformation("User with email {Email} not found", email);
             return NotFound($"User with email {email} was not found.");
         }
+
         _logger.LogInformation("Successfully retrieved user with email: {Email}", email);
         return Ok(user);
     }
-    
+
     /// <summary>
     /// Retrieves a user by their unique identifier.
     /// </summary>

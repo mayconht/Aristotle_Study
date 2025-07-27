@@ -516,3 +516,15 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,dotenv,visualbasic,visualstudio,visualstudiocode,windows,linux
+
+# SonarQube
+.sonarqube/
+.sonar/
+coverage.opencover.xml
+TestResults/
+sonar-scanner-*
+.idea/.idea.Aristotle_Study.dir/.idea/
+
+.vscode/
+
+.idea/.idea.Aristotle_Study/.idea/

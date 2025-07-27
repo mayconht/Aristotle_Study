@@ -74,7 +74,7 @@ public class UserService
                 "An error occurred while retrieving the user.", ex);
         }
     }
-    
+
     /// <summary>
     /// Gets user by their email address.
     /// </summary>
@@ -91,6 +91,7 @@ public class UserService
                 _logger.LogWarning("Attempted to get user with null or empty email");
                 throw new ArgumentNullException(nameof(email), "Email cannot be null or empty.");
             }
+
             _logger.LogInformation("Getting user with email: {Email}", email);
             var user = await _userRepository.GetByEmailAsync(email);
             switch (user)
@@ -101,7 +102,8 @@ public class UserService
                 default:
                     _logger.LogInformation("Successfully retrieved user with email: {Email}", email);
                     break;
-            }   
+            }
+
             return user;
         }
         catch (Exception ex) when (ex is not ArgumentNullException)
@@ -308,7 +310,6 @@ public class UserService
 
         if (validationErrors.Count != 0) throw new DomainValidationException(validationErrors, nameof(User));
 
-        // Return completed task for async consistency
         await Task.CompletedTask;
     }
 

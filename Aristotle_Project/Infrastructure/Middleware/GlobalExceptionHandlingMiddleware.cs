@@ -70,10 +70,9 @@ public class GlobalExceptionHandlingMiddleware
         // and return appropriate error responses based on the exception type.
         var errorResponse = exception switch
         {
-            
             // After a while I sterted to think that this is not the best way to handle exceptions
             // because it can lead to a lot of boilerplate code and can be hard to maintain
-            
+
             UserNotFoundException userNotFound => new ErrorResponse
             {
                 Type = "UserNotFound",

@@ -27,19 +27,19 @@ public class User
     /// <summary>
     /// User Generated Id.
     /// </summary>
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// User Name.
     /// </summary>
     [Required]
-    public string Name { get; init; }
+    public string Name { get; set; }
 
     /// <summary>
     /// User Email.
     /// </summary>
     [Required]
-    public string Email { get; init; }
+    public string Email { get; set; }
 
     /// <summary>
     /// User Date of Birth.

@@ -8,7 +8,6 @@ namespace Aristotle.Infrastructure;
 /// </summary>
 public class ApplicationDbContext : DbContext
 {
-
     //Any domain or entity that you want to persist in the database should be added here
     //This is the DbSet for the User entity, it literally means "table" in the database
     //So as a poor implementation this should not be here, should be in a interface or a repository
@@ -17,7 +16,7 @@ public class ApplicationDbContext : DbContext
     /// 
     /// </summary>
     public DbSet<User> Users { get; set; }
-    
+
     /// <summary>
     /// Constructor for the ApplicationDbContext class.
     /// </summary>
@@ -42,6 +41,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.Id);
+            entity.Property(u => u.Id)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("NEWID()");
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.DateOfBirth).IsRequired(false);

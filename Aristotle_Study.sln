@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aristotle", "Aristotle_Project\Aristotle.csproj", "{DB3A995F-62A1-CBF8-F094-8A09481DD3EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aristotle.UnitTests", "Tests\Aristotle.UnitTests.csproj", "{8B9A5F48-2E1A-4F92-B634-1A2F8E3D7C5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB3A995F-62A1-CBF8-F094-8A09481DD3EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB3A995F-62A1-CBF8-F094-8A09481DD3EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB3A995F-62A1-CBF8-F094-8A09481DD3EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB3A995F-62A1-CBF8-F094-8A09481DD3EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9A5F48-2E1A-4F92-B634-1A2F8E3D7C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9A5F48-2E1A-4F92-B634-1A2F8E3D7C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9A5F48-2E1A-4F92-B634-1A2F8E3D7C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9A5F48-2E1A-4F92-B634-1A2F8E3D7C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C34C3C1D-5A51-4AC1-9F04-D12E64DEADF7}
+	EndGlobalSection
+EndGlobal

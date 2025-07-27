@@ -21,7 +21,7 @@ public interface IUserRepository
     /// </summary>
     /// <returns></returns>
     Task<IEnumerable<User>> GetAllAsync();
-    
+
     /// <summary>
     /// Gets a user by their email.
     /// </summary>
