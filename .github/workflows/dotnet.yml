@@ -32,4 +32,4 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Aristotle_Study.sln
       - name: Test
-        run: dotnet test Tests/Aristotle.UnitTests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test Aristotle_Study.sln --no-build --configuration Release --verbosity normal
