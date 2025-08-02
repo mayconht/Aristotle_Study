@@ -19,13 +19,12 @@ jobs:
         run: dotnet restore Aristotle_Study.sln
       - name: Build
         run: dotnet build Aristotle_Study.sln --no-restore --configuration Release
-      - name: Publish build artifacts
+      - name: Publish test build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: test-build-output
           path: |
-            Aristotle_Project/bin/Release/
-            Tests/bin/Release/
+            Tests/bin/Release/net9.0/
 
   test:
     runs-on: ubuntu-latest
@@ -36,11 +35,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-      - name: Download build artifacts
+      - name: Download test build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-output
+          name: test-build-output
       - name: Restore dependencies
         run: dotnet restore Aristotle_Study.sln
       - name: Test
-        run: dotnet test Aristotle_Study.sln --no-build --configuration Release --verbosity normal
+        run: dotnet test Tests/Aristotle.UnitTests.csproj --no-build --configuration Release --verbosity normal
