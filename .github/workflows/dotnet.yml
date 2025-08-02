@@ -21,4 +21,4 @@ jobs:
       - name: Build
         run: dotnet build Aristotle_Study.sln --no-restore --configuration Release
       - name: Test
-        run: dotnet test Aristotle_Study.sln --no-build --configuration Release --verbosity normal
+        run: dotnet test Tests/Aristotle.UnitTests.csproj --no-build --configuration Release --verbosity normal
