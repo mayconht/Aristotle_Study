@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-using VerifyTests;
 
 namespace Aristotle.UnitTests.Config;
 

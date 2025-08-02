@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace Aristotle.Domain.Exceptions;
 
 /// <summary>
