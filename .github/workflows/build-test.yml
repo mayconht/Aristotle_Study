@@ -14,7 +14,6 @@ jobs:
     name: Build, Test and Analyze
     runs-on: ubuntu-latest
     env:
-      CI: true
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
@@ -72,16 +71,8 @@ jobs:
       - name: Build Solution
         run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
       
-      - name: Check CI Environment Variable
-        run: |
-          echo "Current CI environment variable value: $CI"
-          
       - name: Run Tests with Coverage Collection
-        env:
-          CI: true
-        run: |
-          echo "Running tests with CI=$CI"
-          dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build --environment CI=true" -f opencover -o "coverage.opencover.xml"
+        run: dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build" -f opencover -o "coverage.opencover.xml"
       
       - name: End SonarCloud Analysis
         run: |
