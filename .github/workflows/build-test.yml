@@ -12,6 +12,10 @@ jobs:
     name: Build, Test and Finalize
     runs-on: ubuntu-latest
     
+    # Set environment variables for the job
+    env:
+      CI: true
+    
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -30,12 +34,24 @@ jobs:
       run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
     
     - name: Run Tests with Coverage
-      run: dotnet test Aristotle_Study.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings
+      run: dotnet test "Tests/Aristotle.UnitTests.csproj" --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings --blame-hang-timeout 120000
+    
+    - name: Convert Coverage Format
+      run: |
+        echo "Converting coverage data to Cobertura format"
+        find ./coverage -name "*.xml" -type f -exec cp {} ./coverage/coverage.cobertura.xml \;
+        if [ -f ./coverage/coverage.cobertura.xml ]; then
+          echo "Coverage file found and converted"
+          ls -la ./coverage/
+        else
+          echo "No coverage files found to convert"
+          ls -la ./coverage/
+        fi
     
     - name: Generate Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
       with:
-        reports: './coverage/**/coverage.cobertura.xml'
+        reports: './coverage/coverage.cobertura.xml'
         targetdir: './coveragereport'
         reporttypes: 'HtmlInline;Cobertura'
     
@@ -47,7 +63,7 @@ jobs:
     
     - name: Check Test Results
       run: |
-        if [ -f ./coverage/**/coverage.cobertura.xml ]; then
+        if [ -f ./coverage/coverage.cobertura.xml ]; then
           echo "Tests completed successfully"
         else
           echo "Tests failed or coverage not generated"
