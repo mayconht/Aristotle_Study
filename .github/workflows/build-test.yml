@@ -1,0 +1,90 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  build-test-finalize:
+    name: Build, Test and Finalize
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 9.0.x 
+    
+    - name: Restore Dependencies
+      run: dotnet restore
+    
+    - name: Build Solution
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run Tests with Coverage
+      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings
+    
+    - name: Install SonarScanner
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-coverage
+    
+    - name: Begin SonarQube Analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        dotnet sonarscanner begin \
+          /k:"Aristotle_Study" \
+          /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.cs.vscoveragexml.reportsPaths=coverage/*/coverage.cobertura.xml \
+          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*.cs,**/*Tests.cs,**/obj/**/*.cs" \
+          /d:sonar.exclusions="**/Migrations/**/*.cs,**/obj/**/*.cs"
+    
+    - name: Build for SonarQube Analysis
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: End SonarQube Analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+    
+    - name: Generate Coverage Report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
+      with:
+        reports: './coverage/**/coverage.cobertura.xml'
+        targetdir: './coveragereport'
+        reporttypes: 'HtmlInline;Cobertura'
+    
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coveragereport
+    
+    - name: Check Test Results
+      run: |
+        if [ -f ./coverage/**/coverage.cobertura.xml ]; then
+          echo "Tests completed successfully"
+        else
+          echo "Tests failed or coverage not generated"
+          exit 1
+        fi
+    
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: |
+          Aristotle_Project/bin/Release/net9.0/
+          Tests/bin/Release/net9.0/
