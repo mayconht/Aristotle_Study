@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: Build, Test and Analyze
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       CI: true
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -83,6 +83,11 @@ jobs:
       - name: Build Solution
         run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
       
+      - name: Check CI Environment Variable
+        shell: powershell
+        run: |
+          Write-Host "Current CI environment variable value: $env:CI"
+          
       - name: Run Tests with Coverage Collection
         shell: powershell
         env:
