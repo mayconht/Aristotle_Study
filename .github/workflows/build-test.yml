@@ -24,13 +24,13 @@ jobs:
         dotnet-version: 9.0.x 
     
     - name: Restore Dependencies
-      run: dotnet restore
+      run: dotnet restore Aristotle_Study.sln
     
     - name: Build Solution
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
     
     - name: Run Tests with Coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings
+      run: dotnet test Aristotle_Study.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings
     
     - name: Generate Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
@@ -40,7 +40,7 @@ jobs:
         reporttypes: 'HtmlInline;Cobertura'
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: coveragereport
@@ -55,7 +55,7 @@ jobs:
         fi
     
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
