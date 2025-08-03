@@ -36,70 +36,56 @@ jobs:
           fetch-depth: 0 
       
       - name: Check Secrets
-        shell: powershell
         run: |
-          if (-not [string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
-            Write-Host "SONAR_TOKEN is set"
-          } else {
-            Write-Host "SONAR_TOKEN is NOT set"
-          }
+          if [ ! -z "$SONAR_TOKEN" ]; then
+            echo "SONAR_TOKEN is set"
+          else
+            echo "SONAR_TOKEN is NOT set"
+          fi
           
-      - name: Cache SonarQube Cloud packages
+      - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
-          path: ~\sonar\cache
+          path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
           
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-          
-      - name: Install SonarQube Cloud scanner and dotnet-coverage
-        shell: powershell
+      - name: Install SonarCloud scanner and dotnet-coverage
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory -Force
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          mkdir -p ./.sonar/scanner
+          dotnet tool install --global dotnet-sonarscanner
           dotnet tool install --global dotnet-coverage
       
       - name: Restore Dependencies
         run: dotnet restore Aristotle_Study.sln
       
       - name: Begin SonarCloud Analysis
-        shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"mayconht_Aristotle_Study" `
-            /o:"personalprojcts" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.login="$env:SONAR_TOKEN" `
-            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" `
+          dotnet sonarscanner begin \
+            /k:"mayconht_Aristotle_Study" \
+            /o:"personalprojcts" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.login="$SONAR_TOKEN" \
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*.cs,**/*Tests.cs,**/obj/**/*.cs"
       
       - name: Build Solution
         run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
       
       - name: Check CI Environment Variable
-        shell: powershell
         run: |
-          Write-Host "Current CI environment variable value: $env:CI"
+          echo "Current CI environment variable value: $CI"
           
       - name: Run Tests with Coverage Collection
-        shell: powershell
         env:
           CI: true
         run: |
-          Write-Host "Running tests with CI=$env:CI"
-          dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build -- RunConfiguration.EnvironmentVariables=CI=true" -f opencover -o "coverage.opencover.xml"
+          echo "Running tests with CI=$CI"
+          dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build --environment CI=true" -f opencover -o "coverage.opencover.xml"
       
       - name: End SonarCloud Analysis
-        shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="$env:SONAR_TOKEN"
+          dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
       
       - name: Generate Coverage Report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
