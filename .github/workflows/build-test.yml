@@ -84,7 +84,12 @@ jobs:
         run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
       
       - name: Run Tests with Coverage Collection
-        run: dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build" -f opencover -o "coverage.opencover.xml"
+        shell: powershell
+        env:
+          CI: true
+        run: |
+          Write-Host "Running tests with CI=$env:CI"
+          dotnet-coverage collect "dotnet test Aristotle_Study.sln --configuration Release --no-build -- RunConfiguration.EnvironmentVariables=CI=true" -f opencover -o "coverage.opencover.xml"
       
       - name: End SonarCloud Analysis
         shell: powershell
