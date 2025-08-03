@@ -32,33 +32,6 @@ jobs:
     - name: Run Tests with Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --settings ./coverlet.runsettings
     
-    - name: Install SonarScanner
-      run: |
-        dotnet tool install --global dotnet-sonarscanner
-        dotnet tool install --global dotnet-coverage
-    
-    - name: Begin SonarQube Analysis
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        dotnet sonarscanner begin \
-          /k:"Aristotle_Study" \
-          /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.vscoveragexml.reportsPaths=coverage/*/coverage.cobertura.xml \
-          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*.cs,**/*Tests.cs,**/obj/**/*.cs" \
-          /d:sonar.exclusions="**/Migrations/**/*.cs,**/obj/**/*.cs"
-    
-    - name: Build for SonarQube Analysis
-      run: dotnet build --configuration Release --no-restore
-    
-    - name: End SonarQube Analysis
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-    
     - name: Generate Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
       with:
