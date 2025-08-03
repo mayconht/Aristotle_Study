@@ -14,7 +14,7 @@ public static class TestConfig
     /// </summary>
     private static void Initialize()
     {
-        VerifierSettings.InitializePlugins();
+        // VerifierSettings.InitializePlugins();
     }
 
     /// <summary>
