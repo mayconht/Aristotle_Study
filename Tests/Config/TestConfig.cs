@@ -28,11 +28,10 @@ public static class TestConfig
     /// <summary>
     /// Method to be used for test teardown (can be called in [TearDown] method)
     /// </summary>
-    public static void TearDown()
+    public static Task DisposeAsync()
     {
         try
         {
-            if (Environment.GetEnvironmentVariable("CI") != "true") return;
             Thread.Sleep(2000);
                 
             Task.Run(async () =>
@@ -45,5 +44,8 @@ public static class TestConfig
         {
             // Ensure we don't throw exceptions during teardown
         }
+        
+        return Task.CompletedTask;
+        
     }
 }
