@@ -20,7 +20,7 @@ Keep in mind that this is a simple project for educational purposes and many man
 
 2. **Automatic Setup**
    The dev container will automatically:
-    - Install .NET 9.0 SDK
+    - Install .NET 8.0 SDK
     - Restore NuGet packages
     - Install extensions
     - Build the solution
@@ -31,13 +31,25 @@ Keep in mind that this is a simple project for educational purposes and many man
 Once the container is running:
 
 - **API Base URL**: `http://localhost:3000`
-- **Swagger Documentation**: `http://localhost:3000/swagger/index.html` or `http://localhost:3001/swagger/index.html
+- **Swagger Documentation**: `http://localhost:3000/swagger/index.html` or `http://localhost:3001/swagger/index.html`
 
 If the port is unavailable it might map to the next available one.
 
-> **Important**: The application automatically attempts to open Swagger in your browser. If it doesn't open
-> automatically, manually navigate to the Swagger URL above. (only happens outside the dev container or running from
-> IDE)
+### SonarCloud Integration
+
+The project is integrated with SonarCloud for code quality analysis. To configure SonarCloud properly:
+
+1. **Access SonarCloud Settings**:
+   - Go to [SonarCloud](https://sonarcloud.io/) and log in
+   - Select your project `mayconht_Aristotle_Study`
+   - Navigate to "Administration" > "Analysis Method"
+
+2. **Configure Analysis Method**:
+   - Disable "Automatic Analysis" if you're using CI-based analysis
+   - Or vice versa (don't run both simultaneously)
+
+3. **Required GitHub Secrets**:
+   - `SONAR_TOKEN`: Your SonarCloud API token (from SonarCloud user settings)
 
 ### Hot Reload Feature
 

@@ -23,28 +23,28 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 
-    
+        fetch-depth: 0
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
-    
+
     - name: Install dotnet tools
       run: |
         dotnet tool install --global dotnet-coverage
-    
+
     - name: Restore dependencies
       run: dotnet restore Aristotle_Study.sln
-    
+
     - name: Build with dotnet
       run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
-    
+
     - name: Test with coverage using dotnet-coverage
       run: |
         # Executa apenas o projeto de testes e coleta cobertura com dotnet-coverage
         dotnet-coverage collect "dotnet test Tests/Aristotle.UnitTests.csproj --configuration Release --no-build" -f opencover -o "./coverage.opencover.xml"
-    
+
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v5.0.0
       env:
@@ -58,3 +58,5 @@ jobs:
           -Dsonar.projectBaseDir=.
           -Dsonar.working.directory=.scannerwork
           -Dsonar.autoScan.disabled=true
+
+
