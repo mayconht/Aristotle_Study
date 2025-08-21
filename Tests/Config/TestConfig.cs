@@ -30,9 +30,6 @@ public static class TestConfig
     /// </summary>
     public static Task DisposeAsync()
     {
-        // Only forcefully exit in non-CI environments to avoid interfering with test runners
-        if (Environment.GetEnvironmentVariable("CI") != "true") Environment.Exit(0);
-
         return Task.CompletedTask;
     }
 }

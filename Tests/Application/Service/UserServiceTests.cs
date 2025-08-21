@@ -54,8 +54,8 @@ public class UserServiceTests
         Assert.Equal(_user.Email, result.Email);
         Assert.Equal(_user.DateOfBirth, result.DateOfBirth);
 
-        //This one is quite annoying to configure and understand what is going on
-        // but it is important to assert the exception handling and logging
+        //This one is quite annoying to configure and understand what is going on, but 
+        // it is important to assert the exception handling and logging
         _loggerMock.Verify(
             x => x.Log(
                 LogLevel.Information,
