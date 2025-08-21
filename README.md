@@ -1,39 +1,93 @@
 # Aristotle Study - User Management API
 
 [![Build, Test and Analyze](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
 
-simple ASP.NET Core Web API for learning Entity Framework Core and NSwagger with SQlite.
-Keep in mind that this is a simple project for educational purposes and many many improvements can be made.
+# Aristotle Study - User Management API
+
+A simple ASP.NET Core Web API for learning Entity Framework Core with Clean Architecture principles.
+Keep in mind that this is a simple project for educational purposes and many improvements can be made.
+
+## Technologies Used
+
+- **.NET 8.0** - Target framework
+- **ASP.NET Core Web API** - Web framework
+- **Entity Framework Core 8.0** - ORM with SQLite provider
+- **SQLite** - Lightweight database
+- **Swagger/OpenAPI** - API documentation (Swashbuckle.AspNetCore)
+- **xUnit v3** - Unit testing framework
+- **Moq** - Mocking framework for tests
+- **Verify.XunitV3** - Snapshot testing
+- **Coverlet** - Code coverage analysis
+- **SonarCloud** - Code quality and security analysis
+- **Docker Compose** - For SonarQube local setup (PostgreSQL + SonarQube)
+
+## Architecture
+
+The project follows Clean Architecture principles with the following layers:
+- **Domain** - Entities, interfaces, and domain exceptions
+- **Application** - Services and application-specific logic
+- **Infrastructure** - Data access, repositories, and external concerns
+- **Controllers** - API endpoints and HTTP concerns
 
 ### Prerequisites
 
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [JetBrains Rider](https://www.jetbrains.com/rider/) (recommended) or [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (optional, for SonarQube local setup)
 
 ### Running the Project
 
-1. **Start the Dev Container**
-    - VS Code will detect the `.devcontainer` configuration
-    - Click "Reopen in Container" when prompted
-    - Or use Command Palette (`Ctrl+Shift+P`) → "Dev Containers: Reopen in Container"
+1. **Clone and Restore**
+   ```bash
+   git clone <repository-url>
+   cd Aristotle_Study
+   dotnet restore
+   ```
 
-2. **Automatic Setup**
-   The dev container will automatically:
-    - Install .NET 8.0 SDK
-    - Restore NuGet packages
-    - Install extensions
-    - Build the solution
-    - Start the application with hot reload
+2. **Run the Application**
+   ```bash
+   cd Aristotle_Project
+   dotnet run
+   ```
+
+3. **Or Run with Hot Reload**
+   ```bash
+   cd Aristotle_Project
+   dotnet watch run
+   ```
 
 ### Application Access
 
-Once the container is running:
+Once running:
 
-- **API Base URL**: `http://localhost:3000`
-- **Swagger Documentation**: `http://localhost:3000/swagger/index.html` or `http://localhost:3001/swagger/index.html`
+- **API Base URL**: `http://localhost:5000` (HTTP) or `https://localhost:5001` (HTTPS)
+- **Swagger Documentation**: `http://localhost:5000/swagger/index.html`
 
-If the port is unavailable it might map to the next available one.
+The application will automatically open Swagger UI in your default browser when running in development mode.
+
+### Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run from solution root
+dotnet test Tests/Aristotle.UnitTests.csproj
+```
 
 ### SonarCloud Integration
 
@@ -51,9 +105,21 @@ The project is integrated with SonarCloud for code quality analysis. To configur
 3. **Required GitHub Secrets**:
    - `SONAR_TOKEN`: Your SonarCloud API token (from SonarCloud user settings)
 
+### Local SonarQube Setup (Optional)
+
+For local code quality analysis, you can run SonarQube using Docker Compose:
+
+```bash
+# Start SonarQube and PostgreSQL
+docker-compose up -d
+
+# Access SonarQube at http://localhost:9000
+# Default credentials: admin/admin
+```
+
 ### Hot Reload Feature
 
-The application runs with `dotnet watch` which provides:
+The application supports hot reload with `dotnet watch` which provides:
 
 - **Automatic recompilation** when you save code changes
 - **Live reload** without manual restart
@@ -75,27 +141,49 @@ The API provides user management functionality. Check the Swagger documentation 
 
 The project uses SQLite with Entity Framework Core:
 
-- **Database file**: `users.db` (created automatically with migrations)
-- **Migrations**: Applied automatically on startup
+- **Database file**: `users.db` (created automatically)
+- **Migrations**: Located in `Migrations/` folder
+- **Context**: `ApplicationDbContext` in Infrastructure layer
+
+To create new migrations:
+```bash
+cd Aristotle_Project
+dotnet ef migrations add <MigrationName>
+dotnet ef database update
+```
 
 ### Development Workflow
 
-1. Make code changes in VS Code
+1. Make code changes in your IDE
 2. Save the file (`Ctrl+S`)
-3. Watch the terminal for hot reload confirmation
+3. Watch the terminal for hot reload confirmation (if using `dotnet watch`)
 4. Test changes immediately in Swagger UI
-5. Repeat!
+5. Run tests to ensure everything works
+6. Repeat!
+
+### Project Structure
+
+```
+Aristotle_Project/
+├── Application/          # Application services and logic
+├── Controllers/          # API controllers
+├── Domain/              # Domain entities and interfaces
+├── Infrastructure/      # Data access and external concerns
+├── Migrations/         # EF Core migrations
+└── Program.cs          # Application entry point
+
+Tests/
+└── Aristotle.UnitTests.csproj  # Unit tests project
+```
 
 ### Troubleshooting
 
-**Port Issues**: If port 3000 is already in use, stop other services or modify the port in
-`Properties/launchSettings.json`
-
-**Container Issues**: Rebuild the dev container using Command Palette (ctrl + f1) → "Dev Containers: Rebuild Container"
+**Port Issues**: If default ports are in use, modify the URLs in `Properties/launchSettings.json`
 
 **Database Issues**: Delete `users.db` file to reset the database (it will be recreated automatically)
 
+**Build Issues**: Run `dotnet clean` followed by `dotnet restore` and `dotnet build`
+
 ---
 
-Yes, I am a tester and I am still lacking the Unit tests, well, well, it is friday and I need to play some games.
-At least I managed to do a parallel with Java and Spring Boot.
+*This project serves as a learning exercise comparing C#/.NET development patterns with Java/Spring Boot, focusing on Clean Architecture principles and modern development practices.*
