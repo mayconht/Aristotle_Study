@@ -42,10 +42,11 @@ jobs:
     
     - name: Test with coverage using dotnet-coverage
       run: |
+        # Executa apenas o projeto de testes e coleta cobertura com dotnet-coverage
         dotnet-coverage collect "dotnet test Tests/Aristotle.UnitTests.csproj --configuration Release --no-build" -f opencover -o "./coverage.opencover.xml"
     
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v5.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -54,3 +55,6 @@ jobs:
           -Dsonar.projectKey=mayconht_Aristotle_Study
           -Dsonar.organization=personalprojcts
           -Dsonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+          -Dsonar.projectBaseDir=.
+          -Dsonar.working.directory=.scannerwork
+          -Dsonar.autoScan.disabled=true
