@@ -1,6 +1,6 @@
 # Aristotle Study - User Management API
 
-[![.NET](https://github.com/mayconht/Aristotle_Study/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/mayconht/Aristotle_Study/actions/workflows/dotnet.yml)
+[![Build, Test and Analyze](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml)
 
 simple ASP.NET Core Web API for learning Entity Framework Core and NSwagger with SQlite.
 Keep in mind that this is a simple project for educational purposes and many many improvements can be made.
