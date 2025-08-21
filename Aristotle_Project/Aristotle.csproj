@@ -29,15 +29,15 @@
         <PackageReference Include="xunit.v3" Version="3.0.0"/>
 
         <!-- Code Coverage Packages for SonarQube Integration -->
-        <PackageReference Include="coverlet.collector" Version="*">
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.msbuild" Version="*">
+        <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
     </ItemGroup>
 
 </Project>
