@@ -125,8 +125,9 @@ public class UserServiceTests
         _userRepositoryMock.Setup(repo => repo.GetByIdAsync(UserId)).ThrowsAsync(expectedException);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ServiceOperationException>(
-            async () => await _userService.GetUserByIdAsync(UserId));
+        var exception =
+            await Assert.ThrowsAsync<ServiceOperationException>(async () =>
+                await _userService.GetUserByIdAsync(UserId));
 
         // Assert
         // In Java is super tricky to assert exceptions, I like the way C# handles it
@@ -142,7 +143,7 @@ public class UserServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => 
+                It.Is<It.IsAnyType>((v, t) =>
                     v.ToString()!.Contains($"Getting user with ID: {UserId}")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
@@ -152,7 +153,7 @@ public class UserServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => 
+                It.Is<It.IsAnyType>((v, t) =>
                     v.ToString()!.Contains($"Error occurred while getting user with ID: {UserId}")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),

@@ -66,22 +66,21 @@ app.MapControllers();
 // Check if this is being called from a test environment
 // In test scenarios, we don't want to start the web server
 // This feels ugly but it works for now.
-var isTestEnvironment = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null || 
-                       args.Contains("--test") ||
-                       (Assembly.GetEntryAssembly()?.GetName().Name?.Contains("testhost") ?? false);
+var isTestEnvironment = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null ||
+                        args.Contains("--test") ||
+                        (Assembly.GetEntryAssembly()?.GetName().Name?.Contains("testhost") ?? false);
 
-if (!isTestEnvironment)
-{
-    await app.RunAsync();
-}
+if (!isTestEnvironment) await app.RunAsync();
 
 /// <summary>
 /// Program class for test access
 /// </summary>
-public partial class Program 
-{ 
+public partial class Program
+{
     /// <summary>
     /// Protected constructor for testing
     /// </summary>
-    protected Program() { }
+    protected Program()
+    {
+    }
 }

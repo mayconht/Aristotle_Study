@@ -1,4 +1,3 @@
-
 namespace Aristotle.Domain.Exceptions;
 
 //The Error class is widely known so you can find examples of it in many places.
