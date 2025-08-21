@@ -13,18 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      CI: true # Sets CI environment variable to true
+      CI: true
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # Important for SonarCloud to get proper SCM data
+        fetch-depth: 0 
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '8.0.x'
     
     - name: Restore dependencies
       run: dotnet restore Aristotle_Study.sln
