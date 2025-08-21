@@ -30,22 +30,9 @@ public static class TestConfig
     /// </summary>
     public static Task DisposeAsync()
     {
-        try
-        {
-            Thread.Sleep(2000);
-                
-            Task.Run(async () =>
-            {
-                await Task.Delay(5000);
-                Environment.Exit(0);
-            });
-        }
-        catch
-        {
-            // Ensure we don't throw exceptions during teardown
-        }
-        
+        // Only forcefully exit in non-CI environments to avoid interfering with test runners
+        if (Environment.GetEnvironmentVariable("CI") != "true") Environment.Exit(0);
+
         return Task.CompletedTask;
-        
     }
 }
