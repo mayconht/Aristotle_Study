@@ -7,20 +7,20 @@
           <!-- Output format: opencover is required for SonarCloud -->
           <Format>opencover</Format>
           
-          <!-- Exclude test assemblies, migrations, and generated code -->
-          <Exclude>[*.Tests]*,[*]*.Migrations.*,[*]*Program*,[*]*Startup*</Exclude>
+          <!-- Exclude test assemblies and generated code -->
+          <Exclude>[*.Tests]*,[*.UnitTests]*,[*]*.Migrations.*,[*]*Program</Exclude>
+          
+          <!-- Include the main project -->
+          <Include>[Aristotle]*</Include>
           
           <!-- Exclude methods and classes marked with these attributes -->
           <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
           
           <!-- Exclude specific files and directories -->
-          <ExcludeByFile>**/Migrations/**/*.cs,**/bin/**/*.cs,**/obj/**/*.cs,**/wwwroot/**/*.cs</ExcludeByFile>
+          <ExcludeByFile>**/Migrations/**,**/bin/**,**/obj/**</ExcludeByFile>
           
           <!-- Skip auto-properties to focus on meaningful code -->
           <SkipAutoProps>true</SkipAutoProps>
-          
-          <!-- Include test assembly for coverage of integration tests -->
-          <IncludeTestAssembly>false</IncludeTestAssembly>
         </Configuration>
       </DataCollector>
     </DataCollectors>
