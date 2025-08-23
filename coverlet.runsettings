@@ -4,7 +4,7 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <!-- Output format: opencover is required for SonarQube -->
+          <!-- Output format: opencover is required for SonarCloud -->
           <Format>opencover</Format>
           
           <!-- Exclude test assemblies, migrations, and generated code -->
@@ -16,12 +16,6 @@
           <!-- Exclude specific files and directories -->
           <ExcludeByFile>**/Migrations/**/*.cs,**/bin/**/*.cs,**/obj/**/*.cs,**/wwwroot/**/*.cs</ExcludeByFile>
           
-          <!-- Include all assemblies in the solution -->
-          <IncludeDirectory>../</IncludeDirectory>
-          
-          <!-- Enable deterministic reports for consistent results (disabled for OpenCover) -->
-          <!-- <DeterministicReport>true</DeterministicReport> -->
-          
           <!-- Skip auto-properties to focus on meaningful code -->
           <SkipAutoProps>true</SkipAutoProps>
           
@@ -31,20 +25,4 @@
       </DataCollector>
     </DataCollectors>
   </DataCollectionRunSettings>
-  
-  <!-- Test execution parameters -->
-  <TestRunParameters>
-    <Parameter name="Environment" value="Test" />
-  </TestRunParameters>
-  
-  <!-- Logger configuration -->
-  <LoggerRunSettings>
-    <Loggers>
-      <Logger friendlyName="trx" enabled="true">
-        <Configuration>
-          <LogFileName>TestResults.trx</LogFileName>
-        </Configuration>
-      </Logger>
-    </Loggers>
-  </LoggerRunSettings>
 </RunSettings>
