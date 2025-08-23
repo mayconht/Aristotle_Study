@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateDocumentationFile>true</GenerateDocumentationFile> <!-- Enable XML documentation generation -->
         <DocumentationFile>bin\Debug\net8.0\Aristotle.xml</DocumentationFile>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
