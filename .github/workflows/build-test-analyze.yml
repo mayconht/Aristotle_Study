@@ -54,7 +54,7 @@ jobs:
           -Dsonar.tests=Tests
           -Dsonar.projectKey=mayconht_Aristotle_Study
           -Dsonar.organization=personalprojcts
-          -Dsonar.cs.opencover.reportsPaths=./coverage.opencover.xml
+          -Dsonar.cs.opencover.reportsPaths=coverage.opencover.xml
           -Dsonar.projectBaseDir=.
           -Dsonar.working.directory=.scannerwork
           -Dsonar.autoScan.disabled=true
