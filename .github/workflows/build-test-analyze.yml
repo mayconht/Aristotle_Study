@@ -62,7 +62,7 @@ jobs:
         ./.sonar/scanner/dotnet-sonarscanner begin \
           /k:"mayconht_Aristotle_Study" \
           /o:"personalprojcts" \
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.token="$SONAR_TOKEN" \
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.opencover.reportsPaths="./coverage.opencover.xml" \
           /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*"
