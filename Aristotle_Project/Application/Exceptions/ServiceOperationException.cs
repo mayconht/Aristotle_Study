@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace Aristotle.Application.Exceptions;
 
 /// <summary>
@@ -77,18 +75,6 @@ public class ServiceOperationException : ApplicationException
         Context = new Dictionary<string, object>();
     }
 
-    /// <summary>
-    /// Initializes a new instance of the ServiceOperationException class with serialized data.
-    /// </summary>
-    /// <param name="info">The SerializationInfo that holds the serialized object data.</param>
-    /// <param name="context">The StreamingContext that contains contextual information.</param>
-    protected ServiceOperationException(SerializationInfo info, StreamingContext context) : base(
-        "A service operation failed.")
-    {
-        Operation = info.GetString(nameof(Operation));
-        Context = (Dictionary<string, object>?)info.GetValue(nameof(Context),
-            typeof(Dictionary<string, object>)) ?? new Dictionary<string, object>();
-    }
 
     /// <summary>
     /// Adds context information to the exception.
