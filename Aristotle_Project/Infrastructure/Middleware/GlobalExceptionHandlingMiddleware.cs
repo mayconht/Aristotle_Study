@@ -15,6 +15,17 @@ namespace Aristotle.Infrastructure.Middleware;
 public class GlobalExceptionHandlingMiddleware
 {
     private const string RequestDetailsMessage = "An error occurred while processing your request";
+    private const string ErrorCode = "errorCode";
+    private const string EntityId = "entityId";
+    private const string EntityType = "entityType";
+    private const string Service = "service";
+    private const string Operation = "operation";
+    private const string RepositoryType = "repositoryType";
+    private const string ParameterName = "parameterName";
+    private const string Component = "component";
+    private const string TableName = "tableName";
+    private const string ValidationErrors = "validationErrors";
+    private const string TargetType = "targetType";
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
     
