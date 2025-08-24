@@ -14,13 +14,10 @@ namespace Aristotle.Infrastructure.Middleware;
 /// </summary>
 public class GlobalExceptionHandlingMiddleware
 {
+    private const string RequestDetailsMessage = "An error occurred while processing your request";
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
-
-    // This can be moved to a separate static class if needed
-    // also instantiation of JsonSerializerOptions is not necessary in every request,
-    // it can be reused across requests since the options are immutable.
-    // but keeping it here for simplicity and encapsulation, but sometimes it is useful to have a centralized place for JSON serialization options.
+    
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -125,27 +122,9 @@ public class GlobalExceptionHandlingMiddleware
                 Status = (int)HttpStatusCode.Conflict,
                 Detail = duplicateEmail.Message,
                 Instance = context.Request.Path,
-                ErrorCode = duplicateEmail.ErrorCode,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["email"] = duplicateEmail.UserEmail
-                }
+                ErrorCode = duplicateEmail.ErrorCode
             },
 
-            BusinessRuleViolationException businessRule => new ErrorResponse
-            {
-                Type = "BusinessRuleViolation",
-                Title = "Business Rule Violation",
-                Status = (int)HttpStatusCode.BadRequest,
-                Detail = businessRule.Message,
-                Instance = context.Request.Path,
-                ErrorCode = businessRule.ErrorCode,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["ruleName"] = businessRule.RuleName,
-                    ["context"] = businessRule.Context
-                }
-            },
 
             DomainException domainException => new ErrorResponse
             {
@@ -163,7 +142,7 @@ public class GlobalExceptionHandlingMiddleware
                 Type = "ServiceOperationFailed",
                 Title = "Service Operation Failed",
                 Status = (int)HttpStatusCode.InternalServerError,
-                Detail = "An error occurred while processing your request",
+                Detail = RequestDetailsMessage,
                 Instance = context.Request.Path,
                 ErrorCode = serviceOperation.ErrorCode,
                 Extensions = new Dictionary<string, object?>
@@ -178,7 +157,7 @@ public class GlobalExceptionHandlingMiddleware
                 Type = "ApplicationError",
                 Title = "Application Error",
                 Status = (int)HttpStatusCode.InternalServerError,
-                Detail = "An error occurred while processing your request",
+                Detail = RequestDetailsMessage,
                 Instance = context.Request.Path,
                 ErrorCode = applicationException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
@@ -207,7 +186,7 @@ public class GlobalExceptionHandlingMiddleware
                 Type = "DatabaseError",
                 Title = "Database Error",
                 Status = (int)HttpStatusCode.InternalServerError,
-                Detail = "An error occurred while processing your request",
+                Detail = RequestDetailsMessage,
                 Instance = context.Request.Path,
                 ErrorCode = databaseException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
@@ -222,7 +201,7 @@ public class GlobalExceptionHandlingMiddleware
                 Type = "InfrastructureError",
                 Title = "Infrastructure Error",
                 Status = (int)HttpStatusCode.InternalServerError,
-                Detail = "An error occurred while processing your request",
+                Detail = RequestDetailsMessage,
                 Instance = context.Request.Path,
                 ErrorCode = infrastructureException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
