@@ -73,195 +73,169 @@ public class GlobalExceptionHandlingMiddleware
         var response = context.Response;
         response.ContentType = "application/json";
 
-        // Creating an exception switch to handle different exception types
-        // this is quite interesting because it allows us to handle different exceptions in a more structured way
-        // and return appropriate error responses based on the exception type.
         var errorResponse = exception switch
         {
-            // After a while I sterted to think that this is not the best way to handle exceptions
-            // because it can lead to a lot of boilerplate code and can be hard to maintain
-
             UserNotFoundException userNotFound => new ErrorResponse
             {
-                Type = "UserNotFound",
                 Title = "User Not Found",
                 Status = (int)HttpStatusCode.NotFound,
                 Detail = userNotFound.Message,
-                Instance = context.Request.Path,
-                ErrorCode = userNotFound.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["entityType"] = userNotFound.EntityType,
-                    ["entityId"] = userNotFound.EntityId
+                    [EntityType] = userNotFound.EntityType,
+                    [EntityId] = userNotFound.EntityId,
+                    [ErrorCode] = userNotFound.ErrorCode
                 }
             },
 
             EntityNotFoundException entityNotFound => new ErrorResponse
             {
-                Type = "EntityNotFound",
                 Title = "Entity Not Found",
                 Status = (int)HttpStatusCode.NotFound,
                 Detail = entityNotFound.Message,
-                Instance = context.Request.Path,
-                ErrorCode = entityNotFound.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["entityType"] = entityNotFound.EntityType,
-                    ["entityId"] = entityNotFound.EntityId
+                    [EntityType] = entityNotFound.EntityType,
+                    [EntityId] = entityNotFound.EntityId,
+                    [ErrorCode] = entityNotFound.ErrorCode
                 }
             },
 
             DomainValidationException validationException => new ErrorResponse
             {
-                Type = "ValidationFailed",
                 Title = "Validation Failed",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = validationException.Message,
-                Instance = context.Request.Path,
-                ErrorCode = validationException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["validationErrors"] = validationException.ValidationErrors,
-                    ["targetType"] = validationException.TargetType
+                    [ValidationErrors] = validationException.ValidationErrors,
+                    [TargetType] = validationException.TargetType,
+                    [ErrorCode] = validationException.ErrorCode
                 }
             },
 
             DuplicateUserEmailException duplicateEmail => new ErrorResponse
             {
-                Type = "DuplicateEmail",
                 Title = "Duplicate Email",
                 Status = (int)HttpStatusCode.Conflict,
                 Detail = duplicateEmail.Message,
-                Instance = context.Request.Path,
-                ErrorCode = duplicateEmail.ErrorCode
+                Extensions = new Dictionary<string, object?>
+                {
+                    [ErrorCode] = duplicateEmail.ErrorCode
+                }
             },
-
 
             DomainException domainException => new ErrorResponse
             {
-                Type = "DomainError",
                 Title = "Domain Error",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = domainException.Message,
-                Instance = context.Request.Path,
-                ErrorCode = domainException.ErrorCode
+                Extensions = new Dictionary<string, object?>
+                {
+                    [ErrorCode] = domainException.ErrorCode
+                }
             },
-
 
             ServiceOperationException serviceOperation => new ErrorResponse
             {
-                Type = "ServiceOperationFailed",
                 Title = "Service Operation Failed",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = RequestDetailsMessage,
-                Instance = context.Request.Path,
-                ErrorCode = serviceOperation.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["service"] = serviceOperation.Service,
-                    ["operation"] = serviceOperation.Operation
+                    [Service] = serviceOperation.Service,
+                    [Operation] = serviceOperation.Operation,
+                    [ErrorCode] = serviceOperation.ErrorCode
                 }
             },
 
             ApplicationException applicationException => new ErrorResponse
             {
-                Type = "ApplicationError",
                 Title = "Application Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = RequestDetailsMessage,
-                Instance = context.Request.Path,
-                ErrorCode = applicationException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["service"] = applicationException.Service
+                    [Service] = applicationException.Service,
+                    [ErrorCode] = applicationException.ErrorCode
                 }
             },
 
             RepositoryException repositoryException => new ErrorResponse
             {
-                Type = "RepositoryError",
                 Title = "Data Access Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = "An error occurred while accessing data",
-                Instance = context.Request.Path,
-                ErrorCode = repositoryException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["repositoryType"] = repositoryException.RepositoryType,
-                    ["entityId"] = repositoryException.EntityId
+                    [RepositoryType] = repositoryException.RepositoryType,
+                    [EntityId] = repositoryException.EntityId,
+                    [ErrorCode] = repositoryException.ErrorCode
                 }
             },
 
             DatabaseException databaseException => new ErrorResponse
             {
-                Type = "DatabaseError",
                 Title = "Database Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = RequestDetailsMessage,
-                Instance = context.Request.Path,
-                ErrorCode = databaseException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["operation"] = databaseException.Operation,
-                    ["tableName"] = databaseException.TableName
+                    [Operation] = databaseException.Operation,
+                    [TableName] = databaseException.TableName,
+                    [ErrorCode] = databaseException.ErrorCode
                 }
             },
 
             InfrastructureException infrastructureException => new ErrorResponse
             {
-                Type = "InfrastructureError",
                 Title = "Infrastructure Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = RequestDetailsMessage,
-                Instance = context.Request.Path,
-                ErrorCode = infrastructureException.ErrorCode,
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["component"] = infrastructureException.Component
+                    [Component] = infrastructureException.Component,
+                    [ErrorCode] = infrastructureException.ErrorCode
                 }
             },
 
             ArgumentNullException argumentNull => new ErrorResponse
             {
-                Type = "InvalidArgument",
                 Title = "Invalid Argument",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = argumentNull.Message,
-                Instance = context.Request.Path,
-                ErrorCode = "ARGUMENT_NULL",
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["parameterName"] = argumentNull.ParamName
+                    [ParameterName] = argumentNull.ParamName,
+                    [ErrorCode] = "ARGUMENT_NULL"
                 }
             },
 
             ArgumentException argumentException => new ErrorResponse
             {
-                Type = "InvalidArgument",
                 Title = "Invalid Argument",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = argumentException.Message,
-                Instance = context.Request.Path,
-                ErrorCode = "ARGUMENT_INVALID",
                 Extensions = new Dictionary<string, object?>
                 {
-                    ["parameterName"] = argumentException.ParamName
+                    [ParameterName] = argumentException.ParamName,
+                    [ErrorCode] = "ARGUMENT_INVALID"
                 }
             },
 
             _ => new ErrorResponse
             {
-                Type = "InternalServerError",
                 Title = "Internal Server Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = "An unexpected error occurred. Please try again later.",
-                Instance = context.Request.Path,
-                ErrorCode = "UNKNOWN_ERROR"
+                Extensions = new Dictionary<string, object?>
+                {
+                    [ErrorCode] = "UNKNOWN_ERROR"
+                }
             }
         };
 
         response.StatusCode = errorResponse.Status;
-
 
         switch (exception)
         {
