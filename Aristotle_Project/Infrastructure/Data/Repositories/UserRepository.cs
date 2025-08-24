@@ -14,6 +14,7 @@ namespace Aristotle.Infrastructure.Data.Repositories;
 /// </summary>
 public class UserRepository : IUserRepository
 {
+    private const string TableName = "Users";
     private readonly ApplicationDbContext _context;
     private readonly ILogger<UserRepository> _logger;
 
@@ -56,7 +57,7 @@ public class UserRepository : IUserRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Database error occurred while retrieving user with ID: {UserId}", id);
-            throw new DatabaseException("GetById", "Users", $"Failed to retrieve user with ID: {id}", ex.ToString());
+            throw new DatabaseException("GetById", TableName, $"Failed to retrieve user with ID: {id}", ex.ToString());
         }
     }
 
@@ -78,7 +79,7 @@ public class UserRepository : IUserRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Database error occurred while retrieving all users");
-            throw new DatabaseException("GetAll", "Users", "Failed to retrieve all users", ex.ToString());
+            throw new DatabaseException("GetAll", TableName, "Failed to retrieve all users", ex.ToString());
         }
     }
 
@@ -102,7 +103,7 @@ public class UserRepository : IUserRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Database error occurred while retrieving user by email lookup");
-            throw new DatabaseException("GetByEmail", "Users", "Failed to retrieve user by email lookup",
+            throw new DatabaseException("GetByEmail", TableName, "Failed to retrieve user by email lookup",
                 ex.ToString());
         }
     }
@@ -134,15 +135,15 @@ public class UserRepository : IUserRepository
             _logger.LogWarning("Database constraint violation while adding user with ID: {UserId}", user.Id);
 
             if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
-                throw new DatabaseException("Add", "Users", "A user with this email already exists in the database",
+                throw new DatabaseException("Add", TableName, "A user with this email already exists in the database",
                     ex.ToString());
 
-            throw new DatabaseException("Add", "Users", "Failed to add user to database", ex.ToString());
+            throw new DatabaseException("Add", TableName, "Failed to add user to database", ex.ToString());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error occurred while adding user with ID: {UserId}", user.Id);
-            throw new DatabaseException("Add", "Users", "Unexpected error occurred while adding user", ex.ToString());
+            throw new DatabaseException("Add", TableName, "Unexpected error occurred while adding user", ex.ToString());
         }
     }
 
@@ -184,22 +185,22 @@ public class UserRepository : IUserRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogError(ex, "Concurrency conflict while updating user with ID: {UserId}", user.Id);
-            throw new DatabaseException("Update", "Users", "The user was modified by another process", ex.ToString());
+            throw new DatabaseException("Update", TableName, "The user was modified by another process", ex.ToString());
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Database constraint violation while updating user with ID: {UserId}", user.Id);
 
             if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
-                throw new DatabaseException("Update", "Users", "A user with this email already exists in the database",
+                throw new DatabaseException("Update", TableName, "A user with this email already exists in the database",
                     ex.ToString());
 
-            throw new DatabaseException("Update", "Users", "Failed to update user in database", ex.ToString());
+            throw new DatabaseException("Update", TableName, "Failed to update user in database", ex.ToString());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error occurred while updating user with ID: {UserId}", user.Id);
-            throw new DatabaseException("Update", "Users", "Unexpected error occurred while updating user",
+            throw new DatabaseException("Update", TableName, "Unexpected error occurred while updating user",
                 ex.ToString());
         }
     }
@@ -232,7 +233,7 @@ public class UserRepository : IUserRepository
         catch (Exception ex) when (ex is not DatabaseException)
         {
             _logger.LogError(ex, "Database error occurred while deleting user with ID: {UserId}", id);
-            throw new DatabaseException("Delete", "Users", $"Failed to delete user with ID: {id}", ex.ToString());
+            throw new DatabaseException("Delete", TableName, $"Failed to delete user with ID: {id}", ex.ToString());
         }
     }
 }
