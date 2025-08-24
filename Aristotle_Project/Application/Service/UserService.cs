@@ -131,7 +131,7 @@ public class UserService
             var users = await _userRepository.GetAllAsync();
             var allUsersAsync = users.ToList();
 
-            _logger.LogInformation("Successfully retrieved {UserCount} users", allUsersAsync.Count);
+            _logger.LogDebug("Successfully retrieved {UserCount} users", allUsersAsync.Count);
 
             return allUsersAsync;
         }
@@ -167,10 +167,10 @@ public class UserService
             
             await ValidateUniqueEmailAsync(user.Email);
 
-            _logger.LogInformation("Creating user with email: {Email}", user.Email);
+            _logger.LogDebug("Creating user with email: {Email}", user.Email);
             var createdUser = await _userRepository.AddAsync(user);
 
-            _logger.LogInformation("Successfully created user with ID: {UserId} and email: {Email}",
+            _logger.LogDebug("Successfully created user with ID: {UserId} and email: {Email}",
                 createdUser.Id, createdUser.Email);
 
             return createdUser;
@@ -325,7 +325,7 @@ public class UserService
 
         if (existingUser != null)
         {
-            _logger.LogWarning("Attempted to create/update user with duplicate email: {Email}", email);
+            _logger.LogDebug("Attempted to create/update user with duplicate email: {Email}", email);
             throw new DuplicateUserEmailException(email);
         }
 
