@@ -22,17 +22,6 @@ public class DatabaseException : InfrastructureException
     public string? SqlState { get; }
 
     /// <summary>
-    /// Initializes a new instance of the DatabaseException class with operation details.
-    /// </summary>
-    /// <param name="operation">The database operation that failed.</param>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public DatabaseException(string operation, string message) : base("Database", message)
-    {
-        Operation = operation;
-    }
-
-
-    /// <summary>
     /// Initializes a new instance of the DatabaseException class with full details.
     /// </summary>
     /// <param name="operation">The database operation that failed.</param>
@@ -49,29 +38,28 @@ public class DatabaseException : InfrastructureException
 }
 
 /// <summary>
-/// Exception thrown when a repository operation fails.
-/// This includes entity not found during updates, constraint violations, and other repository-specific errors.
+/// Exception thrown when repository operations fail.
+/// This is a specialized version of DatabaseException for repository-level operations.
 /// </summary>
-[Serializable]
 public class RepositoryException : DatabaseException
 {
     /// <summary>
-    /// Gets the repository type that caused the exception.
+    /// Gets the type of repository where the exception occurred.
     /// </summary>
     public string? RepositoryType { get; }
 
     /// <summary>
-    /// Gets the entity identifier that was involved in the operation.
+    /// Gets the entity identifier associated with the failed operation.
     /// </summary>
     public object? EntityId { get; }
 
     /// <summary>
     /// Initializes a new instance of the RepositoryException class with entity details.
     /// </summary>
-    /// <param name="repositoryType">The repository type that caused the exception.</param>
-    /// <param name="entityId">The entity identifier involved in the operation.</param>
+    /// <param name="repositoryType">The type of repository where the exception occurred.</param>
+    /// <param name="entityId">The entity identifier associated with the failed operation.</param>
     /// <param name="message">The error message that explains the reason for the exception.</param>
-    public RepositoryException(string repositoryType, object entityId, string message) : base("Repository", message)
+    public RepositoryException(string repositoryType, object entityId, string message) : base("Repository", message, "", message)
     {
         RepositoryType = repositoryType;
         EntityId = entityId;

@@ -5,73 +5,16 @@ namespace Aristotle.Domain.Exceptions;
 /// This exception encapsulates common user domain scenarios such as duplicate emails,
 /// invalid user data, or user state violations.
 /// </summary>
-[Serializable]
 public class UserDomainException : DomainException
 {
-    /// <summary>
-    /// Gets the user identifier associated with this exception.
-    /// </summary>
-    public Guid? UserId { get; }
-
-    /// <summary>
-    /// Gets the user email associated with this exception.
-    /// </summary>
-    public string? UserEmail { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the UserDomainException class.
-    /// </summary>
-    public UserDomainException() : base("A user domain exception occurred.")
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserDomainException class with a custom message.
-    /// </summary>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public UserDomainException(string message) : base(message)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserDomainException class with user ID.
-    /// </summary>
-    /// <param name="userId">The user identifier associated with this exception.</param>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public UserDomainException(Guid userId, string message) : base(message)
-    {
-        UserId = userId;
-    }
-
     /// <summary>
     /// Initializes a new instance of the UserDomainException class with user email.
     /// </summary>
     /// <param name="userEmail">The user email associated with this exception.</param>
     /// <param name="message">The error message that explains the reason for the exception.</param>
-    public UserDomainException(string userEmail, string message) : base(message)
+    protected UserDomainException(string userEmail, string message) : base(message)
     {
-        UserEmail = userEmail;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserDomainException class with user ID and email.
-    /// </summary>
-    /// <param name="userId">The user identifier associated with this exception.</param>
-    /// <param name="userEmail">The user email associated with this exception.</param>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public UserDomainException(Guid userId, string userEmail, string message) : base(message)
-    {
-        UserId = userId;
-        UserEmail = userEmail;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserDomainException class with an inner exception.
-    /// </summary>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    /// <param name="innerException">The exception that is the cause of the current exception.</param>
-    public UserDomainException(string message, Exception innerException) : base(message, innerException)
-    {
+        // UserEmail parameter is used for the message but not stored since it's not accessed anywhere
     }
 }
 
@@ -89,24 +32,12 @@ public class DuplicateUserEmailException : UserDomainException
         : base(email, $"A user with email '{email}' already exists.")
     {
     }
-
-    /// <summary>
-    /// Initializes a new instance of the DuplicateUserEmailException class with an inner exception.
-    /// </summary>
-    /// <param name="email">The email that already exists.</param>
-    /// <param name="innerException">The exception that is the cause of the current exception.</param>
-    public DuplicateUserEmailException(string email, Exception innerException)
-        : base($"A user with email '{email}' already exists.", innerException)
-    {
-        UserEmail = email;
-    }
 }
 
 /// <summary>
 /// Exception thrown when a user is not found by the specified criteria.
 /// This is a specialized version of EntityNotFoundException for user entities.
 /// </summary>
-[Serializable]
 public class UserNotFoundException : EntityNotFoundException
 {
     /// <summary>

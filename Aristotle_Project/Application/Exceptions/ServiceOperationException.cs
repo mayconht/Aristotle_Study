@@ -11,54 +11,6 @@ public class ServiceOperationException : ApplicationException
     /// </summary>
     public string? Operation { get; }
 
-    /// <summary>
-    /// Gets additional context about the failure.
-    /// </summary>
-    public Dictionary<string, object> Context { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the ServiceOperationException class.
-    /// </summary>
-    public ServiceOperationException() : base("A service operation failed.")
-    {
-        Context = new Dictionary<string, object>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the ServiceOperationException class with a custom message.
-    /// </summary>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public ServiceOperationException(string message) : base(message)
-    {
-        Context = new Dictionary<string, object>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the ServiceOperationException class with service and operation details.
-    /// </summary>
-    /// <param name="service">The service that caused this exception.</param>
-    /// <param name="operation">The operation that failed.</param>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    public ServiceOperationException(string service, string operation, string message) : base(service, message)
-    {
-        Operation = operation;
-        Context = new Dictionary<string, object>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the ServiceOperationException class with context information.
-    /// </summary>
-    /// <param name="service">The service that caused this exception.</param>
-    /// <param name="operation">The operation that failed.</param>
-    /// <param name="message">The error message that explains the reason for the exception.</param>
-    /// <param name="context">Additional context about the failure.</param>
-    public ServiceOperationException(string service, string operation, string message,
-        Dictionary<string, object> context)
-        : base(service, message)
-    {
-        Operation = operation;
-        Context = context;
-    }
 
     /// <summary>
     /// Initializes a new instance of the ServiceOperationException class with an inner exception.
@@ -71,17 +23,5 @@ public class ServiceOperationException : ApplicationException
         : base(service, message, innerException)
     {
         Operation = operation;
-        Context = new Dictionary<string, object>();
-    }
-
-
-    /// <summary>
-    /// Adds context information to the exception.
-    /// </summary>
-    /// <param name="key">The context key.</param>
-    /// <param name="value">The context value.</param>
-    public void AddContext(string key, object value)
-    {
-        Context[key] = value;
     }
 }
