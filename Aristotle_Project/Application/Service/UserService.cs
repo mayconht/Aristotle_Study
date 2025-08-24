@@ -291,13 +291,13 @@ public class UserService
             if (user.DateOfBirth.Value > DateTime.Now)
                 validationErrors.Add(nameof(User.DateOfBirth),
                     ["Date of birth cannot be in the future."]);
-            else if (user.DateOfBirth.Value < DateTime.Now.AddYears(-150))
+            else if (user.DateOfBirth.Value < DateTime.Now.AddYears(-130))
                 validationErrors.Add(nameof(User.DateOfBirth),
-                    ["Date of birth cannot be more than 150 years ago."]);
+                    ["Date of birth cannot be more than 130 years ago."]);
         }
         // I think throwing this specific exception is not useful, as the validation errors dictionary contains all the
         // information needed to understand what went wrong. (in theory I mean)
-        //But as this is a learning exercise, I will keep it this way (also awareness of PII data and GDPR is important
+        // But as this is a learning exercise, I will keep it this way (also awareness of PII data and GDPR is important
         // when throwing exceptions with user data)
         if (validationErrors.Count != 0) throw new DomainValidationException(validationErrors, nameof(User));
 
@@ -319,6 +319,8 @@ public class UserService
         }
 
         _logger.LogDebug("Email validation passed for unique email check");
+        
+        await Task.CompletedTask;
     }
 
     /// <summary>
