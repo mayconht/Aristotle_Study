@@ -6,11 +6,6 @@ namespace Aristotle.Domain.Exceptions;
 public class ErrorResponse
 {
     /// <summary>
-    /// A URI reference that identifies the problem type.
-    /// </summary>
-    public string Type { get; set; } = string.Empty;
-
-    /// <summary>
     /// A short, human-readable summary of the problem type.
     /// </summary>
     public string Title { get; set; } = string.Empty;
@@ -25,15 +20,6 @@ public class ErrorResponse
     /// </summary>
     public string Detail { get; set; } = string.Empty;
 
-    /// <summary>
-    /// A URI reference that identifies the specific occurrence of the problem.
-    /// </summary>
-    public string Instance { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Application-specific error code for this type of error.
-    /// </summary>
-    public string ErrorCode { get; set; } = string.Empty;
 
     /// <summary>
     /// Additional properties that provide more context about the error.
