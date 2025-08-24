@@ -6,11 +6,6 @@ namespace Aristotle.Controllers;
 
 /// <summary>
 /// UserController provides REST API endpoints for user management operations.
-/// All exceptions are handled by the global exception handling middleware.
-/// This controller focuses on HTTP-specific concerns like routing, status codes, and response formatting.
-/// After I added the Swagger lib it complained about the lack of XML comments,
-/// so I added some basic comments to the methods.
-/// This controller provides endpoints for creating, retrieving, updating, and deleting users.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -113,6 +108,7 @@ public class UserController : ControllerBase
         // Model state validation is performed automatically by ASP.NET Core
         // If the model state is invalid, it will return a 400 Bad Request response. 
         // This includes checks for required fields, data types, and validation attributes, quite useful for ensuring the integrity of the data.
+        // for now we are using model directly, but in a real application we would use DTOs to decouple the API layer from the domain layer.
         if (!ModelState.IsValid)
         {
             _logger.LogWarning("Model state validation failed for create user request");
