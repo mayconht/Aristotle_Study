@@ -331,6 +331,8 @@ public class UserService
         try
         {
             // Just learned about MailAddress class, it is a simple way to validate email format
+            //It is not perfect, but it is better than a regex
+            // More info: https://learn.microsoft.com/en-us/dotnet/api/system.net.mail
             var addr = new MailAddress(email);
             return addr.Address == email;
         }
