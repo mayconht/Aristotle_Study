@@ -158,7 +158,7 @@ dotnet ef database update
 2. Save the file (`Ctrl+S`)
 3. Watch the terminal for hot reload confirmation (if using `dotnet watch`)
 4. Test changes immediately in Swagger UI
-5. Run tests to ensure everything works
+5. Run tests to make sure everything works
 6. Repeat!
 
 ### Project Structure

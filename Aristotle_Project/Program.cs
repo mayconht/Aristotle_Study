@@ -31,6 +31,26 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            
+            logger.LogInformation("Validating if database is created and migrations are applied...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database initialization completed successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while creating/migrating the database: {Message}", ex.Message);
+            throw;
+        }
+    }
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -75,7 +95,7 @@ if (!isTestEnvironment) await app.RunAsync();
 /// <summary>
 /// Program class for test access
 /// </summary>
-public partial class Program
+public abstract partial class Program
 {
     /// <summary>
     /// Protected constructor for testing
