@@ -248,11 +248,9 @@ public class GlobalExceptionHandlingMiddleware
                 _logger.LogError(exception, "Infrastructure exception occurred: {ExceptionType}",
                     exception.GetType().Name);
                 break;
-            case ArgumentException:
-                _logger.LogWarning(exception, "Argument exception occurred: {ExceptionType}", exception.GetType().Name);
-                break;
             default:
-                _logger.LogError(exception, "Unhandled exception occurred: {ExceptionType}", exception.GetType().Name);
+                _logger.LogError(exception, "Unexpected exception occurred: {ExceptionType}",
+                    exception.GetType().Name);
                 break;
         }
 
