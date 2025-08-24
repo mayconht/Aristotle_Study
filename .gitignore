@@ -528,3 +528,5 @@ sonar-scanner-*
 .vscode/
 
 .idea/.idea.Aristotle_Study/.idea/
+
+*.db
