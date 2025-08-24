@@ -47,17 +47,16 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserByEmail(string email)
     {
-        _logger.LogInformation("Received request to get user by email: {Email}", email);
-
+        _logger.LogDebug("Received request to get user by email lookup");
 
         var user = await _userService.GetUserByEmailAsync(email);
         if (user == null)
         {
-            _logger.LogInformation("User with email {Email} not found", email);
-            return NotFound($"User with email {email} was not found.");
+            _logger.LogDebug("User not found during email lookup request");
+            return NotFound("User not found.");
         }
 
-        _logger.LogInformation("Successfully retrieved user with email: {Email}", email);
+        _logger.LogDebug("Successfully retrieved user with ID: {UserId} from email lookup request", user.Id);
         return Ok(user);
     }
 
@@ -109,7 +108,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateUser([FromBody] User user)
     {
-        _logger.LogInformation("Received request to create user with email: {Email}", user.Email);
+        _logger.LogInformation("Received request to create user");
 
         // Model state validation is performed automatically by ASP.NET Core
         // If the model state is invalid, it will return a 400 Bad Request response. 

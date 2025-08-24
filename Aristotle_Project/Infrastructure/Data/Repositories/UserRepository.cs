@@ -93,16 +93,16 @@ public class UserRepository : IUserRepository
         try
         {
             var finalMail = new MailAddress(email);
-            _logger.LogDebug("Retrieving user with email: {finalMail}", finalMail);
+            _logger.LogDebug("Retrieving user by email lookup initiated");
             var user = _context.Users.FirstOrDefaultAsync(u => u.Email == finalMail.Address);
 
-            _logger.LogDebug("Successfully retrieved user with email: {Email}", email);
+            _logger.LogDebug("Email lookup query executed successfully");
             return user;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Database error occurred while retrieving user with email: {Email}", email);
-            throw new DatabaseException("GetByEmail", "Users", $"Failed to retrieve user with email: {email}",
+            _logger.LogError(ex, "Database error occurred while retrieving user by email lookup");
+            throw new DatabaseException("GetByEmail", "Users", "Failed to retrieve user by email lookup",
                 ex.ToString());
         }
     }
@@ -120,19 +120,18 @@ public class UserRepository : IUserRepository
 
         try
         {
-            _logger.LogDebug("Adding new user with email: {Email}", user.Email);
+            _logger.LogDebug("Adding new user to database");
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            _logger.LogDebug("Successfully added user with ID: {UserId} and email: {Email}",
-                user.Id, user.Email);
+            _logger.LogInformation("Successfully added user with ID: {UserId}", user.Id);
 
             return user;
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Database constraint violation while adding user with email: {Email}", user.Email);
+            _logger.LogWarning("Database constraint violation while adding user with ID: {UserId}", user.Id);
 
             if (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
                 throw new DatabaseException("Add", "Users", "A user with this email already exists in the database",
@@ -142,7 +141,7 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error occurred while adding user with email: {Email}", user.Email);
+            _logger.LogError(ex, "Unexpected error occurred while adding user with ID: {UserId}", user.Id);
             throw new DatabaseException("Add", "Users", "Unexpected error occurred while adding user", ex.ToString());
         }
     }

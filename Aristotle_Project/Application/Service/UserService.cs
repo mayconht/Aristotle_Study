@@ -92,23 +92,14 @@ public class UserService
                 throw new ArgumentNullException(nameof(email), "Email cannot be null or empty.");
             }
 
-            _logger.LogInformation("Getting user with email: {Email}", email);
+            _logger.LogDebug("Getting user by email lookup initiated");
             var user = await _userRepository.GetByEmailAsync(email);
-            switch (user)
-            {
-                case null:
-                    _logger.LogInformation("User with email {Email} not found", email);
-                    break;
-                default:
-                    _logger.LogInformation("Successfully retrieved user with email: {Email}", email);
-                    break;
-            }
-
+            
             return user;
         }
         catch (Exception ex) when (ex is not ArgumentNullException)
         {
-            _logger.LogError(ex, "Error occurred while getting user with email: {Email}", email);
+            _logger.LogError(ex, "Error occurred while getting user by email lookup");
 
             throw new ServiceOperationException(nameof(UserService), nameof(GetUserByEmailAsync),
                 "An error occurred while retrieving the user by email.", ex);
@@ -167,18 +158,15 @@ public class UserService
             
             await ValidateUniqueEmailAsync(user.Email);
 
-            _logger.LogDebug("Creating user with email: {Email}", user.Email);
+            _logger.LogDebug("Creating user initiated");
             var createdUser = await _userRepository.AddAsync(user);
-
-            _logger.LogDebug("Successfully created user with ID: {UserId} and email: {Email}",
-                createdUser.Id, createdUser.Email);
 
             return createdUser;
         }
         catch (Exception ex) when (ex is not (ArgumentNullException or DomainValidationException
                                        or DuplicateUserEmailException))
         {
-            _logger.LogError(ex, "Error occurred while creating user with email: {Email}", user?.Email ?? "Unknown");
+            _logger.LogError(ex, "Error occurred while creating user");
 
             throw new ServiceOperationException(nameof(UserService), nameof(CreateUserAsync),
                 "An error occurred while creating the user.", ex);
@@ -219,8 +207,7 @@ public class UserService
 
             _logger.LogInformation("Updating user with ID: {UserId}", user.Id);
             var updatedUser = await _userRepository.UpdateAsync(user);
-            _logger.LogInformation("Successfully updated user with ID: {UserId}", updatedUser.Id);
-
+            
             return updatedUser;
         }
         catch (Exception ex) when (ex is not (ArgumentNullException or UserNotFoundException
@@ -328,11 +315,10 @@ public class UserService
 
         if (existingUser != null)
         {
-            _logger.LogDebug("Attempted to create/update user with duplicate email: {Email}", email);
             throw new DuplicateUserEmailException(email);
         }
 
-        _logger.LogDebug("Email validation passed for: {Email}", email);
+        _logger.LogDebug("Email validation passed for unique email check");
     }
 
     /// <summary>
