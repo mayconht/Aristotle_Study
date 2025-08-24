@@ -164,6 +164,7 @@ public class UserService
             }
 
             await ValidateUserAsync(user);
+            
             await ValidateUniqueEmailAsync(user.Email);
 
             _logger.LogInformation("Creating user with email: {Email}", user.Email);
@@ -320,20 +321,15 @@ public class UserService
     /// <exception cref="DuplicateUserEmailException">Thrown when a user with the same email already exists.</exception>
     private async Task ValidateUniqueEmailAsync(string email)
     {
-        // Note: This is a simple implementation. In a real system, you might want to
-        // add a specific method to the repository for email lookup for better performance
-        // like a get by email method. 
-        // TODO: Implement a repository method for checking email uniqueness.
-        var existingUsers = await _userRepository.GetAllAsync();
+        var existingUser = await _userRepository.GetByEmailAsync(email);
 
-        var duplicateUser = existingUsers.FirstOrDefault(u =>
-            string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
-
-        if (duplicateUser != null)
+        if (existingUser != null)
         {
             _logger.LogWarning("Attempted to create/update user with duplicate email: {Email}", email);
             throw new DuplicateUserEmailException(email);
         }
+
+        _logger.LogDebug("Email validation passed for: {Email}", email);
     }
 
     /// <summary>
