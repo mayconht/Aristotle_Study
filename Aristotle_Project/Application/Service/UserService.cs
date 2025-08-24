@@ -308,7 +308,10 @@ public class UserService
                 validationErrors.Add(nameof(User.DateOfBirth),
                     ["Date of birth cannot be more than 150 years ago."]);
         }
-
+        // I think throwing this specific exception is not useful, as the validation errors dictionary contains all the
+        // information needed to understand what went wrong. (in theory I mean)
+        //But as this is a learning exercise, I will keep it this way (also awareness of PII data and GDPR is important
+        // when throwing exceptions with user data)
         if (validationErrors.Count != 0) throw new DomainValidationException(validationErrors, nameof(User));
 
         await Task.CompletedTask;
