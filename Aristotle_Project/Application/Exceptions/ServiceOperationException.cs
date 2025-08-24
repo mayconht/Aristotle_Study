@@ -4,7 +4,6 @@ namespace Aristotle.Application.Exceptions;
 /// ServiceOperationException is thrown when a specific service operation fails.
 /// It provides additional context about the operation that failed, including the service name and operation details
 /// </summary>
-[Serializable]
 public class ServiceOperationException : ApplicationException
 {
     /// <summary>

@@ -3,7 +3,6 @@ namespace Aristotle.Application.Exceptions;
 /// <summary>
 /// Base exception class for application service layer exceptions.
 /// </summary>
-[Serializable]
 public abstract class ApplicationException : Exception
 {
     /// <summary>

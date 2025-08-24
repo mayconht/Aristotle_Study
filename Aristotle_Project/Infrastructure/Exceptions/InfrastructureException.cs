@@ -5,7 +5,6 @@ namespace Aristotle.Infrastructure.Exceptions;
 /// This class represents failures in external systems, data access layers,
 /// and other infrastructure concerns that are not part of the core domain logic.
 /// </summary>
-[Serializable]
 public abstract class InfrastructureException : Exception
 {
     /// <summary>

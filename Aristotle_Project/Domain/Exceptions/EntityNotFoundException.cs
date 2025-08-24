@@ -4,7 +4,6 @@ namespace Aristotle.Domain.Exceptions;
 /// Exception thrown when an entity is not found in the domain.
 /// This represents a business rule violation where a required entity does not exist.
 /// </summary>
-[Serializable]
 public class EntityNotFoundException : DomainException
 {
     /// <summary>

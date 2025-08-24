@@ -5,7 +5,6 @@ namespace Aristotle.Domain.Exceptions;
 /// Base exception class for domain-related exceptions.
 /// This class represents violations of business rules or domain constraints.
 /// </summary>
-[Serializable]
 public abstract class DomainException : Exception
 {
     /// <summary>

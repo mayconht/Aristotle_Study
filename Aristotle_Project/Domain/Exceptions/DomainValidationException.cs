@@ -4,12 +4,12 @@ namespace Aristotle.Domain.Exceptions;
 // Sometimes we will have more exceptions than we need, but this is okay as it allows us to be very specific about the error.
 // Specialy when we are dealing with domain driven or schema driven design.
 
+
 /// <summary>
 /// Exception thrown when validation fails in the domain layer.
 /// This exception is used when entity properties or domain operations fail validation checks.
 /// It provides detailed information about which validation rules were violated.
 /// </summary>
-[Serializable]
 public class DomainValidationException : DomainException
 {
     /// <summary>

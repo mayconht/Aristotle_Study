@@ -4,7 +4,6 @@ namespace Aristotle.Infrastructure.Exceptions;
 /// Exception thrown when database operations fail.
 /// This includes connection issues, query failures, transaction problems, and other database-related errors.
 /// </summary>
-[Serializable]
 public class DatabaseException : InfrastructureException
 {
     /// <summary>

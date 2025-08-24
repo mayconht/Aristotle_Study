@@ -79,7 +79,6 @@ public class UserDomainException : DomainException
 /// Exception thrown when attempting to create a user with an email that already exists.
 /// This represents a violation of the unique email constraint in the user domain.
 /// </summary>
-[Serializable]
 public class DuplicateUserEmailException : UserDomainException
 {
     /// <summary>
@@ -116,35 +115,6 @@ public class UserNotFoundException : EntityNotFoundException
     /// <param name="userId">The user ID that was not found.</param>
     public UserNotFoundException(Guid userId)
         : base("User", userId)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserNotFoundException class with a user email.
-    /// </summary>
-    /// <param name="userEmail">The user email that was not found.</param>
-    public UserNotFoundException(string userEmail)
-        : base("User", userEmail)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserNotFoundException class with a custom message.
-    /// </summary>
-    /// <param name="userId">The user ID that was not found.</param>
-    /// <param name="message">Custom error message.</param>
-    public UserNotFoundException(Guid userId, string message)
-        : base("User", userId, message)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the UserNotFoundException class with an inner exception.
-    /// </summary>
-    /// <param name="userId">The user ID that was not found.</param>
-    /// <param name="innerException">The exception that is the cause of the current exception.</param>
-    public UserNotFoundException(Guid userId, Exception innerException)
-        : base("User", userId, innerException)
     {
     }
 }
