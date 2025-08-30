@@ -1,11 +1,13 @@
+using System.Diagnostics;
+using System.Reflection;
 using Aristotle.Application.Service;
 using Aristotle.Domain.Interfaces;
 using Aristotle.Infrastructure;
 using Aristotle.Infrastructure.Data.Repositories;
+using Aristotle.Infrastructure.Exceptions;
 using Aristotle.Infrastructure.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,11 +37,11 @@ if (app.Environment.IsDevelopment())
     {
         var services = scope.ServiceProvider;
         var logger = services.GetRequiredService<ILogger<Program>>();
-        
+
         try
         {
             var context = services.GetRequiredService<ApplicationDbContext>();
-            
+
             logger.LogInformation("Validating if database is created and migrations are applied...");
             await context.Database.MigrateAsync();
             logger.LogInformation("Database initialization completed successfully.");
@@ -47,7 +49,7 @@ if (app.Environment.IsDevelopment())
         catch (Exception ex)
         {
             logger.LogError(ex, "An error occurred while creating/migrating the database: {Message}", ex.Message);
-            throw;
+            throw new DatabaseException(ex.Message, "N/A", "Database Initialization", ex.ToString());
         }
     }
 
@@ -58,20 +60,21 @@ if (app.Environment.IsDevelopment())
         c.DocumentTitle = "Aristotle API Documentation";
     });
 
-    const string url = "http://localhost:3000/swagger/index.html";
+    var swaggerUrl = app.Configuration["Swagger:Url"] ?? "http://localhost:3000/swagger/index.html";
     _ = Task.Run(() =>
     {
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            Process.Start(new ProcessStartInfo
             {
-                FileName = url,
+                FileName = swaggerUrl,
                 UseShellExecute = true
             });
         }
-        catch
+        catch (Exception ex)
         {
-            Console.WriteLine("Failed to open Swagger UI in the browser. Please visit " + url + " manually.");
+            Console.WriteLine(
+                $"Failed to open Swagger UI in the browser. Please visit {swaggerUrl} manually. Error: {ex.Message}");
         }
     });
 }
