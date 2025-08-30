@@ -60,7 +60,7 @@ if (app.Environment.IsDevelopment())
         c.DocumentTitle = "Aristotle API Documentation";
     });
 
-    var swaggerUrl = app.Configuration["Swagger:Url"] ?? "http://localhost:3000/swagger/index.html";
+    var swaggerUrl = app.Configuration["Swagger:Url"];
     _ = Task.Run(() =>
     {
         try
