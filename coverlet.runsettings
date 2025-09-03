@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Output format: opencover is required for SonarCloud -->
+          <Format>opencover</Format>
+          
+          <!-- Exclude test assemblies and generated code -->
+          <Exclude>[*.Tests]*,[*.UnitTests]*,[*]*.Migrations.*,[*]*Program</Exclude>
+          
+          <!-- Include the main project -->
+          <Include>[Aristotle]*</Include>
+          
+          <!-- Exclude methods and classes marked with these attributes -->
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          
+          <!-- Exclude specific files and directories -->
+          <ExcludeByFile>**/Migrations/**,**/bin/**,**/obj/**</ExcludeByFile>
+          
+          <!-- Skip auto-properties to focus on meaningful code -->
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

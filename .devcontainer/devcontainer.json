@@ -1,0 +1,57 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "User Service Dev container",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/dotnet:1-9.0-bookworm",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// You can also use the tab in the bottom panel to forward ports.
+	// More info: https://aka.ms/vscode-remote/forward-ports
+	"forwardPorts": [
+		"3000:3000"
+	],
+	// "portsAttributes": {A
+	//		"5001": {
+	//			"protocol": "https"
+	//		}
+	// }
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "apt-get update && apt-get install -y fonts-firacode && dotnet restore $(find . -name \"*.csproj\" | head -n 1) && dotnet build $(find . -name \"*.csproj\" | head -n 1)",
+	"postStartCommand": "dotnet watch run --project $(find . -name \"*.csproj\" | head -n 1)",
+	"portsAttributes": {
+		"3000": {
+			"label": "User Service",
+			"description": "User Service running on port 3000",
+			"onAutoForward": "openPreview"
+		}
+	},
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"github.copilot",
+				"github.copilot-chat",
+				"pomdtr.excalidraw-editor",
+				"ms-vscode.vscode-typescript-next",
+				"ms-azuretools.vscode-containers",
+				"ms-dotnettools.csdevkit",
+				"ms-dotnettools.csharp",
+				"ms-dotnettools.vscodeintellicode-csharp",
+				"sonarsource.sonarlint-vscode"
+//				"ms-playwright.playwright"
+			]
+		},
+		// rider configurations - I personally don't recommend using Rider in a dev container,
+//		Rider is heavy when running for the first time, so it is recommended to use VS Code instead.
+//		The limitations are only on remote development, so you can still use Rider locally.
+		// More info: https://www.jetbrains.com/help/rider/Connect_to_DevContainer.html
+		"rider": {
+			"extensions": []
+		}
+	},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "root"
+}
