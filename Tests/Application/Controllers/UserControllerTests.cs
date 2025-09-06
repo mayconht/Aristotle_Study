@@ -8,154 +8,234 @@ using Moq;
 using Xunit;
 using AutoMapper;
 
-namespace Aristotle.UnitTests.Application.Controllers;
-
-public class UserControllerTests
+namespace Aristotle.UnitTests.Application.Controllers
 {
-    private readonly Mock<IUserService> _serviceMock;
-    private readonly Mock<ILogger<UserController>> _loggerMock;
-    private readonly Mock<IMapper> _mapperMock;
-    private readonly UserController _controller;
-
-    public UserControllerTests()
+    public class UserControllerTests
     {
-        _serviceMock = new Mock<IUserService>();
-        _loggerMock = new Mock<ILogger<UserController>>();
-        _mapperMock = new Mock<IMapper>();
-        _controller = new UserController(_serviceMock.Object, _loggerMock.Object, _mapperMock.Object);
-    }
+        private readonly Mock<IUserService> _serviceMock;
+        private readonly Mock<ILogger<UserController>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly UserController _controller;
 
-    [Fact]
-    public void Constructor_NullService_Throws()
-    {
-        Assert.Throws<ArgumentNullException>(() => new UserController(null!, _loggerMock.Object, _mapperMock.Object));
-    }
+        public UserControllerTests()
+        {
+            _serviceMock = new Mock<IUserService>();
+            _loggerMock = new Mock<ILogger<UserController>>();
+            _mapperMock = new Mock<IMapper>();
+            _controller = new UserController(_serviceMock.Object, _loggerMock.Object, _mapperMock.Object);
+        }
+        
+        // ------------------------ Constructor Tests ------------------------//
+        // Validates if the constructor throws ArgumentNullException when any dependency is null
+        // related to dependencie injection and service setup.
+        [Fact]
+        public void Constructor_NullService_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => new UserController(null!, _loggerMock.Object, _mapperMock.Object));
+        }
 
-    [Fact]
-    public void Constructor_NullLogger_Throws()
-    {
-        Assert.Throws<ArgumentNullException>(() => new UserController(_serviceMock.Object, null!, _mapperMock.Object));
-    }
+        [Fact]
+        public void Constructor_NullLogger_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => new UserController(_serviceMock.Object, null!, _mapperMock.Object));
+        }
 
-    [Fact]
-    public void Constructor_NullMapper_Throws()
-    {
-        Assert.Throws<ArgumentNullException>(() => new UserController(_serviceMock.Object, _loggerMock.Object, null!));
-    }
+        [Fact]
+        public void Constructor_NullMapper_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => new UserController(_serviceMock.Object, _loggerMock.Object, null!));
+        }
+        
+        
+        // ------------------------ Action Method Tests ------------------------//
+        // Test each action method for expected behavior, including success and failure scenarios.
+        [Fact]
+        public async Task GetUserByEmail_ReturnsOk()
+        {
+            const string email = "test@example.com";
+            var user = new User(email, "Name") { Id = Guid.NewGuid() };
+            var userResponse = new UserResponseDto() { Id = user.Id, Name = user.Name, Email = user.Email };
+            _serviceMock.Setup(s => s.GetUserByEmailAsync(email)).ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map< UserResponseDto>(user)).Returns(userResponse);
 
-    [Fact]
-    public async Task GetUserByEmail_ReturnsOk()
-    {
-        var email = "test@example.com";
-        var user = new User(email, "Name") { Id = Guid.NewGuid() };
-        var userDto = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
-        _serviceMock.Setup(s => s.GetUserByEmailAsync(email)).ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userDto);
+            var result = await _controller.GetUserByEmail(email);
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, ok.StatusCode);
+            Assert.Equal(userResponse, ok.Value);
+        }
 
-        var result = await _controller.GetUserByEmail(email);
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(200, ok.StatusCode);
-        Assert.Equal(userDto, ok.Value);
-    }
+        [Fact]
+        public async Task GetUserById_ReturnsOk()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var user = new User("e@x.com", "Name") { Id = id };
+            var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+            _serviceMock.Setup(s => s.GetUserByIdAsync(id)).ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
+            
+            // Act
+            var result = await _controller.GetUserById(id);
+            var ok = Assert.IsType<OkObjectResult>(result);
+            
+            //Assert 
+            _serviceMock.Verify(s => s.GetUserByIdAsync(id), Times.Once);
+            _mapperMock.Verify(m => m.Map<UserResponseDto>(user), Times.Once);
+            Assert.Equal(200, ok.StatusCode);
+            Assert.Equal(userResponse, ok.Value);
+        }
 
-    [Fact]
-    public async Task GetUserById_ReturnsOk()
-    {
-        var id = Guid.NewGuid();
-        var user = new User("e@x.com", "Name") { Id = id };
-        var userDto = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
-        _serviceMock.Setup(s => s.GetUserByIdAsync(id)).ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userDto);
+        [Fact]
+        public async Task CreateUser_ReturnsCreated()
+        {
+            // Arrange
+            var userCreateDto = new UserCreateDto { Name = "Name", Email = "abc@x.com" };
+            var user = new User(userCreateDto.Email, userCreateDto.Name) { Id = Guid.NewGuid() };
+            var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+            _mapperMock.Setup(m => m.Map<User>(userCreateDto)).Returns(user);
+            _serviceMock.Setup(s => s.CreateUserAsync(user)).ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
+            
+            // Act
+            var result = await _controller.CreateUser(userCreateDto);
+            var created = Assert.IsType<CreatedAtActionResult>(result);
+            // Assert
+            _mapperMock.Verify(m => m.Map<User>(userCreateDto), Times.Once);
+            _serviceMock.Verify(s => s.CreateUserAsync(user), Times.Once);
+            _mapperMock.Verify(m => m.Map<UserResponseDto>(user), Times.Once);
+            Assert.Equal(201, created.StatusCode);
+            Assert.Equal(userResponse, created.Value);
+            Assert.Equal(nameof(UserController.GetUserById), created.ActionName);
+            Assert.Equal(user.Id, ((Guid)created.RouteValues!["id"]!));
+        }
 
-        var result = await _controller.GetUserById(id);
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(200, ok.StatusCode);
-        Assert.Equal(userDto, ok.Value);
-    }
+        [Fact]
+        public async Task CreateUser_InvalidModel_ReturnsBadRequest()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("Name", "Required");
+            var userCreateDto = new UserCreateDto { Name = "", Email = "a@x.com" };
+            // Act
+            var result = await _controller.CreateUser(userCreateDto);
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+            var modelState = Assert.IsType<SerializableError>(badRequestResult.Value, exactMatch: false);
+            Assert.True(modelState.ContainsKey("Name"));
+            Assert.Contains("Required", ((string[])modelState["Name"])[0]);
+        }
 
-    [Fact]
-    public async Task CreateUser_ReturnsCreated()
-    {
-        var userCreateDto = new UserCreateDto { Name = "Name", Email = "abc@x.com" };
-        var user = new User(userCreateDto.Email, userCreateDto.Name) { Id = Guid.NewGuid() };
-        var userDto = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
-        _mapperMock.Setup(m => m.Map<User>(userCreateDto)).Returns(user);
-        _serviceMock.Setup(s => s.CreateUserAsync(user)).ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userDto);
+        [Fact]
+        public async Task UpdateUser_ReturnsOk()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "a@x.com" };
+            var user = new User(userUpdateDto.Email, userUpdateDto.Name) { Id = id };
+            var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+            _mapperMock.Setup(m => m.Map<User>(userUpdateDto)).Returns(user);
+            _serviceMock.Setup(s => s.UpdateUserAsync(user)).ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
 
-        var result = await _controller.CreateUser(userCreateDto);
-        var created = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal(201, created.StatusCode);
-        Assert.Equal(userDto, created.Value);
-        Assert.Equal(nameof(UserController.GetUserById), created.ActionName);
-        Assert.Equal(user.Id, (Guid)created.RouteValues!["id"]!);
-    }
+            // Act
+            var result = await _controller.UpdateUser(id, userUpdateDto);
+            
+            // Assert
+            _mapperMock.Verify(m => m.Map<User>(userUpdateDto), Times.Once);
+            _serviceMock.Verify(s => s.UpdateUserAsync(user), Times.Once);
+            _mapperMock.Verify(m => m.Map<UserResponseDto>(user), Times.Once);
+            Assert.IsType<OkObjectResult>(result);
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(userResponse, ok.Value);
+        }
 
-    [Fact]
-    public async Task CreateUser_InvalidModel_ReturnsBadRequest()
-    {
-        _controller.ModelState.AddModelError("Name", "Required");
-        var userCreateDto = new UserCreateDto { Name = "", Email = "a@x.com" };
-        var result = await _controller.CreateUser(userCreateDto);
-        Assert.IsType<BadRequestObjectResult>(result);
-    }
+        [Fact]
+        public async Task UpdateUser_InvalidModel_ReturnsBadRequest()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("e","err");
+            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "e@x.com" };
+            
+            // Act
+            var result = await _controller.UpdateUser(Guid.NewGuid(), userUpdateDto);
+            
+            // Assert
+            Assert.Equal(400, (result as BadRequestObjectResult)!.StatusCode);
+            var modelState = Assert.IsType<SerializableError>(((BadRequestObjectResult)result).Value!, exactMatch: false);
+            Assert.True(modelState.ContainsKey("e"));
+            Assert.Contains("err", ((string[])modelState["e"])[0]); 
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
 
-    [Fact]
-    public async Task UpdateUser_ReturnsOk()
-    {
-        var id = Guid.NewGuid();
-        var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "a@x.com" };
-        var user = new User(userUpdateDto.Email, userUpdateDto.Name) { Id = id };
-        var userDto = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
-        _mapperMock.Setup(m => m.Map<User>(userUpdateDto)).Returns(user);
-        _serviceMock.Setup(s => s.UpdateUserAsync(user)).ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userDto);
+        [Fact]
+        public async Task UpdateUser_IdMismatch_ReturnsBadRequest()
+        {
+            // Arrange
+            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "a@x.com" };
+            const string errorMessage = "The ID in the URL must match the ID in the user data.";
+            _controller.ModelState.AddModelError("Id", errorMessage);
 
-        var result = await _controller.UpdateUser(id, userUpdateDto);
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(userDto, ok.Value);
-    }
+            // Act
+            var result = await _controller.UpdateUser(Guid.NewGuid(), userUpdateDto);
 
-    [Fact]
-    public async Task UpdateUser_InvalidModel_ReturnsBadRequest()
-    {
-        _controller.ModelState.AddModelError("e", "err");
-        var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "e@x.com" };
-        var result = await _controller.UpdateUser(Guid.NewGuid(), userUpdateDto);
-        Assert.IsType<BadRequestObjectResult>(result);
-    }
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+            var modelState = Assert.IsType<SerializableError>(badRequestResult.Value, exactMatch: false);
+            Assert.True(modelState.ContainsKey("Id"));
+            Assert.Contains(errorMessage, ((string[])modelState["Id"])[0]);
 
-    [Fact]
-    public async Task DeleteUser_ReturnsNoContent()
-    {
-        var id = Guid.NewGuid();
-        _serviceMock.Setup(s => s.DeleteUserAsync(id)).ReturnsAsync(true);
+         }
 
-        var result = await _controller.DeleteUser(id);
-        Assert.IsType<NoContentResult>(result);
-    }
+        [Fact]
+        public async Task DeleteUser_ReturnsNoContent()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            _serviceMock.Setup(s => s.DeleteUserAsync(id)).ReturnsAsync(true);
+            
+            // Act
+            var result = await _controller.DeleteUser(id);
+            
+            // Assert
+            _serviceMock.Verify(s => s.DeleteUserAsync(id), Times.Once);
+            Assert.IsType<NoContentResult>(result);
+        }
 
-    [Fact]
-    public async Task DeleteUser_NotFound_ReturnsNotFound()
-    {
-        var id = Guid.NewGuid();
-        _serviceMock.Setup(s => s.DeleteUserAsync(id)).ReturnsAsync(false);
+        [Fact]
+        public async Task DeleteUser_NotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            _serviceMock.Setup(s => s.DeleteUserAsync(id)).ReturnsAsync(false);
+            
+            // Act
+            var result = await _controller.DeleteUser(id);
+            
+            // Assert
+            _serviceMock.Verify(s => s.DeleteUserAsync(id), Times.Once);
+            var nf = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Contains(id.ToString(), nf.Value?.ToString());
+        }
 
-        var result = await _controller.DeleteUser(id);
-        var nf = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Contains(id.ToString(), nf.Value?.ToString());
-    }
-
-    [Fact]
-    public async Task GetAllUsers_ReturnsOk()
-    {
-        var users = new List<User> { new("e@x.com", "Name") };
-        var userDtos = users.Select(u => new UserResponseDto { Id = u.Id, Name = u.Name, Email = u.Email }).ToList();
-        _serviceMock.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
-        _mapperMock.Setup(m => m.Map<IEnumerable<UserResponseDto>>(users)).Returns(userDtos);
-
-        var result = await _controller.GetAllUsers();
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(userDtos, ok.Value);
+        [Fact]
+        public async Task GetAllUsers_ReturnsOk()
+        {
+            // Arrange
+            var users = new List<User> { new User("e@x.com","Name") };
+            var userResponse = users.Select(u => new UserResponseDto { Id = u.Id, Name = u.Name, Email = u.Email }).ToList();
+            _serviceMock.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
+            _mapperMock.Setup(m => m.Map<IEnumerable<UserResponseDto>>(users)).Returns(userResponse);
+            
+            // Act
+            var result = await _controller.GetAllUsers();
+            
+            // Assert
+            _serviceMock.Verify(s => s.GetAllUsersAsync(), Times.Once);
+            _mapperMock.Verify(m => m.Map<IEnumerable<UserResponseDto>>(users), Times.Once);
+            Assert.IsType<OkObjectResult>(result);
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(userResponse, ok.Value);
+        }
     }
 }
