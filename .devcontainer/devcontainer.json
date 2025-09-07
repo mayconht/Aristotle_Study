@@ -3,15 +3,15 @@
 {
 	"name": "User Service Dev container",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/dotnet:1-9.0-bookworm",
+	"image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// You can also use the tab in the bottom panel to forward ports.
 	// More info: https://aka.ms/vscode-remote/forward-ports
-	"forwardPorts": [
-		"3000:3000"
-	],
+	// "forwardPorts": [
+	// 	"3000:3000"
+	// ],
 	// "portsAttributes": {A
 	//		"5001": {
 	//			"protocol": "https"
@@ -40,8 +40,8 @@
 				"ms-dotnettools.csdevkit",
 				"ms-dotnettools.csharp",
 				"ms-dotnettools.vscodeintellicode-csharp",
-				"sonarsource.sonarlint-vscode"
-//				"ms-playwright.playwright"
+				"sonarsource.sonarlint-vscode",
+				"ms-playwright.playwright"
 			]
 		},
 		// rider configurations - I personally don't recommend using Rider in a dev container,

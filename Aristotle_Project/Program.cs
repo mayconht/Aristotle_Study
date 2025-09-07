@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var openBrowser = false;
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -64,23 +65,36 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Aristotle API v1");
         c.DocumentTitle = "Aristotle API Documentation";
     });
-
+    
     var swaggerUrl = app.Configuration["Swagger:Url"];
-    _ = Task.Run(() =>
+    if (openBrowser)
     {
-        try
+        _ = Task.Run(() =>
         {
-            Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = swaggerUrl,
-                UseShellExecute = true
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(
-                $"Failed to open Swagger UI in the browser. Please visit {swaggerUrl} manually. Error: {ex.Message}");
-        }
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = swaggerUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"Failed to open Swagger UI in the browser. Please visit {swaggerUrl} manually. Error: {ex.Message}");
+            }
+        });
+    }
+    else
+    {
+        Console.WriteLine($"Swagger UI is available at: {swaggerUrl}");
+    }
+
+    app.MapGet("/", context =>
+    {
+        context.Response.Redirect("/swagger/index.html");
+        return Task.CompletedTask;
     });
 }
 
@@ -95,7 +109,6 @@ app.MapControllers();
 // In test scenarios, we don't want to start the web server
 // This feels ugly but it works for now.
 var isTestEnvironment = builder.Configuration.GetValue<bool>("TestEnvironment:Enabled") ||
-                        Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null ||
                         args.Contains("--test") ||
                         (Assembly.GetEntryAssembly()?.GetName().Name?.Contains("testhost") ?? false);
 
