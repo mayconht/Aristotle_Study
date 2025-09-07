@@ -237,7 +237,10 @@ namespace Aristotle.UnitTests.Application.Controllers
         {
             // Arrange
             var users = new List<User> {
-                new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build()
+                new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build(),
+                new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build(),
+                new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build(),
+                
             };
             var userResponse = users.Select(u => new UserResponseDto { Id = u.Id, Name = u.Name, Email = u.Email }).ToList();
             _serviceMock.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);

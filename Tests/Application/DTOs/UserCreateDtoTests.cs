@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Aristotle.Application.DTOs;
+using Aristotle.UnitTests.Builders;
 using Xunit;
 
 namespace Aristotle.UnitTests.Application.DTOs;
@@ -74,12 +75,7 @@ public class UserCreateDtoTests
     public void DataAnnotations_ValidObject_PassesValidation()
     {
         // Arrange
-        var dto = new UserCreateDto
-        {
-            Name = "Valid Name",
-            Email = "valid@email.com",
-            DateOfBirth = null
-        };
+        var dto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
         
         // Act & Assert
         var ctx = new ValidationContext(dto);
