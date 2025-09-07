@@ -1,7 +1,7 @@
 using Aristotle.Infrastructure.Data.Repositories;
 using Aristotle.Infrastructure;
-using Aristotle.Domain.Entities;
 using Aristotle.Infrastructure.Exceptions;
+using Aristotle.UnitTests.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,9 +20,33 @@ public class UserRepositoryTests
     private readonly Mock<ILogger<UserRepository>> _loggerMock = new();
 
     [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenContextIsNull()
+    {
+        var exception = Assert.Throws<ArgumentNullException>(() => new UserRepository(null!, _loggerMock.Object));
+        Assert.Equal("context", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
+    {
+        var exception =
+            Assert.Throws<ArgumentNullException>(() => new UserRepository(new ApplicationDbContext(_options), null!));
+        Assert.Equal("logger", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_DoesNotThrow_WhenParametersAreValid()
+    {
+        var exception =
+            Record.Exception(() => new UserRepository(new ApplicationDbContext(_options), _loggerMock.Object));
+        Assert.Null(exception);
+    }
+
+
+    [Fact]
     public async Task GetByIdAsync_ReturnsUser_WhenExists()
     {
-        var user = new User("e@x.com", "Name") { Id = Guid.NewGuid() };
+        var user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             context.Users.Add(user);
