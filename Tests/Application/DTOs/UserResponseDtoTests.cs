@@ -17,7 +17,7 @@ public class UserResponseDtoTests
         var dob = new DateTime(2000, 1, 1, 0, 0, 1, DateTimeKind.Utc);
 
         // Act
-        var dto = new UserResponseDto()
+        var dto = new UserResponseDto
         {
             Id = id,
             Name = name,
@@ -36,7 +36,7 @@ public class UserResponseDtoTests
     public void CanSerializeAndDeserialize()
     {
         // Arrange
-        var dto = new UserResponseDto()
+        var dto = new UserResponseDto
         {
             Name = "A",
             Email = "a@b.com",
