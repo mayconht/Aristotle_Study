@@ -8,7 +8,6 @@ namespace Aristotle.Application.DTOs;
 /// </summary>
 public class UserCreateDto
 {
-
     /// <summary>
     /// Constructor for UserCreateDto.
     /// </summary>

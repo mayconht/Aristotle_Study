@@ -13,7 +13,7 @@ public class UserUpdateDtoTests
         const string name = "Test User";
         const string email = "test@example.com";
         var dob = new DateTime(2000, 1, 1);
-        var dto = new UserUpdateDto()
+        var dto = new UserUpdateDto
         {
             Name = name,
             Email = email,
@@ -41,7 +41,7 @@ public class UserUpdateDtoTests
     [Fact]
     public void CanSerializeAndDeserialize()
     {
-        var dto = new UserUpdateDto()
+        var dto = new UserUpdateDto
         {
             Name = "A",
             Email = "a@b.com",
@@ -57,10 +57,10 @@ public class UserUpdateDtoTests
     [Fact]
     public void DataAnnotations_ValidObject_PassesValidation()
     {
-        var dto = new UserUpdateDto()
+        var dto = new UserUpdateDto
         {
             Name = "Valid Name",
-            Email = "valid@email.com",
+            Email = "valid@email.com"
         };
         var ctx = new ValidationContext(dto);
         Validator.ValidateObject(dto, ctx, true);

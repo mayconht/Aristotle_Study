@@ -15,11 +15,9 @@ public class UserServiceTests
     private static readonly Guid UserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
     private readonly Mock<ILogger<UserService>> _loggerMock;
 
-    private readonly User _user = new("test@example.com", "Test User")
-    {
-        Id = UserId,
-        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-    };
+
+    //TODO For other tests, consider using AutoFixture to generate test data
+    private readonly User _user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
 
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly UserService _userService;
@@ -29,6 +27,31 @@ public class UserServiceTests
         _userRepositoryMock = new Mock<IUserRepository>();
         _loggerMock = new Mock<ILogger<UserService>>();
         _userService = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+    }
+
+    [Fact]
+    public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new UserService(null!, _loggerMock.Object));
+    }
+
+    [Fact]
+    public void Constructor_ShouldThrowArgumentNullException_WhenLoggerIsNull()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new UserService(_userRepositoryMock.Object, null!));
+    }
+
+    [Fact]
+    public void Constructor_ShouldCreateInstance_WhenParametersAreValid()
+    {
+        // Act
+        var service = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+
+        // Assert
+        Assert.NotNull(service);
+        Assert.IsType<UserService>(service);
     }
 
     [Fact]
@@ -48,6 +71,8 @@ public class UserServiceTests
         Assert.Equal(_user.Name, result.Name);
         Assert.Equal(_user.Email, result.Email);
         Assert.Equal(_user.DateOfBirth, result.DateOfBirth);
+        _userRepositoryMock.Verify(r => r.GetByIdAsync(UserId), Times.Once);
+        _userRepositoryMock.VerifyNoOtherCalls();
 
         //This one is quite annoying to configure and understand what is going on, but 
         // it is important to assert the exception handling and logging
@@ -96,6 +121,16 @@ public class UserServiceTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ServiceOperationException>(() => _userService.GetUserByIdAsync(UserId));
+        _userRepositoryMock.Verify(r => r.GetByIdAsync(UserId), Times.Once);
+        _userRepositoryMock.VerifyNoOtherCalls();
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"Error occurred while getting user by ID: {UserId}")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Fact]
@@ -113,6 +148,16 @@ public class UserServiceTests
         Assert.Equal(_user.Name, result.Name);
         Assert.Equal(_user.Email, result.Email);
         Assert.Equal(_user.DateOfBirth, result.DateOfBirth);
+        _userRepositoryMock.Verify(r => r.GetByEmailAsync(_user.Email), Times.Once);
+        _userRepositoryMock.VerifyNoOtherCalls();
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Debug,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Getting user by email")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Theory]
@@ -122,12 +167,44 @@ public class UserServiceTests
     public async Task GetUserByEmailAsync_ShouldThrowArgumentNullException_OnBlank(string? email)
     {
         await Assert.ThrowsAsync<ArgumentNullException>(() => _userService.GetUserByEmailAsync(email!));
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Attempted to get user with null or empty email")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
-    [Fact]
-    public async Task GetUserByEmailAsync_ShouldThrowArgumentException_OnInvalidFormat()
+    [Theory]
+    [InlineData("plainaddress")]
+    [InlineData("@missingusername.com")]
+    [InlineData("username@.com")]
+    // [InlineData("username@com")]
+    // [InlineData("username@domain..com")] //TODO need a robust email validator
+    [InlineData("Bad")]
+    public async Task GetUserByEmailAsync_ShouldThrowArgumentException_OnInvalidFormat(string email)
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetUserByEmailAsync("bad"));
+        await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetUserByEmailAsync(email));
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Invalid email format provided")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+        
+        
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Debug,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"Invalid email format provided: {email}")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Fact]
@@ -213,7 +290,7 @@ public class UserServiceTests
     public async Task CreateUserAsync_ShouldThrowDuplicateUserEmailException_WhenExists()
     {
         // Arrange
-        var nu = new UserBuilder().Build();
+        var nu = new UserBuilder().WithEmailAddress().WithId().WithName().Build();
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(nu.Email)).ReturnsAsync(nu);
 
         // Act & Assert
@@ -224,7 +301,8 @@ public class UserServiceTests
     public async Task CreateUserAsync_ShouldReturnUser_WhenValid()
     {
         // Arrange
-        var nu = new UserBuilder().Build();
+        var nu = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(nu.Email)).ReturnsAsync((User?)null);
         _userRepositoryMock.Setup(r => r.AddAsync(nu)).ReturnsAsync(nu);
 
@@ -270,27 +348,29 @@ public class UserServiceTests
     public async Task UpdateUserAsync_ShouldThrowDuplicateUserEmailException_WhenChanging()
     {
         // Arrange
-        var ex = new UserBuilder().Build();
-        var other = new UserBuilder().WithEmailAddress("other@x.com").Build();
-        _userRepositoryMock.Setup(r => r.GetByIdAsync(ex.Id)).ReturnsAsync(ex);
-        var up = new User(ex.Email, ex.Name)
-        {
-            Id = ex.Id,
-            Email = other.Email
-        };
-        _userRepositoryMock.Setup(r => r.GetByEmailAsync(other.Email)).ReturnsAsync(other);
+        var existingUser = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+        var otherUser = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+
+        var userToUpdate = new UserBuilder().WithId(existingUser.Id).WithEmailAddress(otherUser.Email).WithName().Build();
+
+        _userRepositoryMock.Setup(r => r.GetByIdAsync(userToUpdate.Id)).ReturnsAsync(existingUser);
+        _userRepositoryMock.Setup(r => r.GetByEmailAsync(userToUpdate.Email)).ReturnsAsync(otherUser);
 
         // Act & Assert
-        await Assert.ThrowsAsync<DuplicateUserEmailException>(() => _userService.UpdateUserAsync(up));
+        await Assert.ThrowsAsync<DuplicateUserEmailException>(() => _userService.UpdateUserAsync(userToUpdate));
+        //Assert Mocks
+        _userRepositoryMock.Verify(r => r.GetByIdAsync(userToUpdate.Id), Times.Once);
+        _userRepositoryMock.Verify(r => r.GetByEmailAsync(userToUpdate.Email), Times.Once);
+        _userRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
     }
 
     [Fact]
     public async Task UpdateUserAsync_ShouldReturnUpdatedUser_WhenValid()
     {
         // Arrange
-        var ex = new UserBuilder().WithEmailAddress("old@x.com").Build();
+        var ex = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         ex.Id = UserId;
-        var up = new UserBuilder().WithEmailAddress("new@x.com").Build();
+        var up = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         up.Id = UserId;
         _userRepositoryMock.Setup(r => r.GetByIdAsync(UserId)).ReturnsAsync(ex);
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(up.Email)).ReturnsAsync((User?)null);
@@ -356,7 +436,8 @@ public class UserServiceTests
     public async Task CreateUserAsync_ShouldWrapException_OnRepoAddError()
     {
         // Arrange
-        var nu = new UserBuilder().Build();
+        var nu = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(nu.Email)).ReturnsAsync((User?)null);
         _userRepositoryMock.Setup(r => r.AddAsync(nu)).ThrowsAsync(new Exception("Add error"));
 
@@ -376,9 +457,10 @@ public class UserServiceTests
     public async Task UpdateUserAsync_ShouldWrapException_OnRepoUpdateError()
     {
         // Arrange
-        var existing = new UserBuilder().Build();
+        var existing = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+
         existing.Id = UserId;
-        var up = new UserBuilder().WithEmailAddress("new@x.com").Build();
+        var up = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         up.Id = UserId;
         _userRepositoryMock.Setup(r => r.GetByIdAsync(UserId)).ReturnsAsync(existing);
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(up.Email)).ReturnsAsync((User?)null);

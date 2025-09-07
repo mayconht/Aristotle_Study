@@ -59,7 +59,7 @@ public class GlobalExceptionHandlingMiddleware
     }
 
     // TODO: Move this to shared domain project, not sure how to handle it right now.
-    
+
     /// <summary>
     /// Handles exceptions by converting them to appropriate HTTP responses.
     /// </summary>

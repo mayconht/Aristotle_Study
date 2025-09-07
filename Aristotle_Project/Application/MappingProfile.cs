@@ -15,7 +15,9 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<User, UserResponseDto>();
-        CreateMap<UserCreateDto, User>();
-        CreateMap<UserUpdateDto, User>();
+
+        CreateMap<UserCreateDto, User>().ConstructUsing(dto => new User(Guid.NewGuid(), dto.Email, dto.Name, dto.DateOfBirth));
+
+        CreateMap<UserUpdateDto, User>().ConstructUsing(dto => new User(Guid.Empty, dto.Email, dto.Name, dto.DateOfBirth));
     }
 }
