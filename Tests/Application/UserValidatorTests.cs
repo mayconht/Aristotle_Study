@@ -1,6 +1,7 @@
 using Aristotle.Application;
 using Aristotle.Domain.Entities;
 using Aristotle.Domain.Exceptions;
+using Aristotle.UnitTests.Builders;
 using Xunit;
 
 namespace Aristotle.UnitTests.Application;
@@ -11,10 +12,7 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_ValidUser_ShouldNotThrowException()
     {
         // Arrange
-        var validUser = new User("test@example.com", "John Doe")
-        {
-            DateOfBirth = new DateTime(1990, 1, 1)
-        };
+        var validUser = new UserBuilder().WithId().WithEmailAddress().WithAdultAge().WithName().Build();
 
         // Act & Assert
         await UserValidator.ValidateUserAsync(validUser);
@@ -26,10 +24,7 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_ValidUserWithoutDateOfBirth_ShouldNotThrowException()
     {
         // Arrange
-        var validUser = new User("test@example.com", "John Doe")
-        {
-            DateOfBirth = null
-        };
+        var validUser = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
 
         // Act & Assert
         await UserValidator.ValidateUserAsync(validUser);
@@ -43,7 +38,7 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_EmptyOrWhitespaceName_ShouldThrowDomainValidationException(string name)
     {
         // Arrange
-        var user = new User("test@example.com", "Valid Name");
+        var user = new UserBuilder().WithId().WithEmailAddress().WithAdultAge().Build();
         user.Name = name; // Override with invalid name
 
         // Act & Assert
@@ -58,8 +53,7 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_NullName_ShouldThrowDomainValidationException()
     {
         // Arrange
-        var user = new User("test@example.com", "Valid Name");
-        user.Name = null!; // Override with null name
+        var user = new UserBuilder().WithId().WithEmailAddress().WithAdultAge().Build();
 
         // Act & Assert
         var exception =
@@ -73,8 +67,8 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_NameTooLong_ShouldThrowDomainValidationException()
     {
         // Arrange
-        var longName = new string('A', 101); // 101 characters
-        var user = new User("test@example.com", longName);
+        var user = new UserBuilder().WithId().WithEmailAddress().WithAdultAge().WithName().Build();
+        user.Name = new string('A', 131); // 131 characters
 
         // Act & Assert
         var exception =
@@ -88,8 +82,8 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_MaxLengthName_ShouldNotThrowException()
     {
         // Arrange
-        var maxLengthName = new string('A', 100); // Exactly 100 characters
-        var user = new User("test@example.com", maxLengthName);
+        var user = new UserBuilder().WithId().WithEmailAddress().WithAdultAge().Build();
+        user.Name = new string('A', 100); // Changed from 130 to 100 characters
 
         // Act & Assert
         await UserValidator.ValidateUserAsync(user);
@@ -100,11 +94,12 @@ public class UserValidatorTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("   ")]
-    public async Task ValidateUserAsync_EmptyOrWhitespaceEmail_ShouldThrowDomainValidationException(string email)
+    [InlineData(null)]
+    public async Task ValidateUserAsync_EmptyOrWhitespaceEmail_ShouldThrowDomainValidationException(string? email)
     {
         // Arrange
-        var user = new User("valid@example.com", "John Doe");
-        user.Email = email; // Override with invalid email
+        var user = new UserBuilder().WithId().WithAdultAge().WithName().Build();
+        user.Email = email!;
 
         // Act & Assert
         var exception =
@@ -114,20 +109,6 @@ public class UserValidatorTests
         Assert.Contains("Email is required and cannot be empty.", exception.ValidationErrors["Email"]);
     }
 
-    [Fact]
-    public async Task ValidateUserAsync_NullEmail_ShouldThrowDomainValidationException()
-    {
-        // Arrange
-        var user = new User("valid@example.com", "John Doe");
-        user.Email = null!; // Override with null email
-
-        // Act & Assert
-        var exception =
-            await Assert.ThrowsAsync<DomainValidationException>(() => UserValidator.ValidateUserAsync(user));
-
-        Assert.Contains("Email", exception.ValidationErrors.Keys);
-        Assert.Contains("Email is required and cannot be empty.", exception.ValidationErrors["Email"]);
-    }
 
     [Theory]
     [InlineData("invalid-email")]
@@ -137,7 +118,8 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_InvalidEmailFormat_ShouldThrowDomainValidationException(string invalidEmail)
     {
         // Arrange
-        var user = new User(invalidEmail, "John Doe");
+        var user = new UserBuilder().WithId().WithAdultAge().WithName().Build();
+        user.Email = invalidEmail;
 
         // Act & Assert
         var exception =
@@ -155,7 +137,8 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_ValidEmailFormats_ShouldNotThrowException(string validEmail)
     {
         // Arrange
-        var user = new User(validEmail, "John Doe");
+        var user = new UserBuilder().WithName().WithId().WithAdultAge().Build();
+        user.Email = validEmail;
 
         // Act & Assert
         await UserValidator.ValidateUserAsync(user);
@@ -166,11 +149,12 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_FutureDateOfBirth_ShouldThrowDomainValidationException()
     {
         // Arrange
-        var futureDate = DateTime.Now.AddDays(1);
-        var user = new User("test@example.com", "John Doe")
-        {
-            DateOfBirth = futureDate
-        };
+        var user = new UserBuilder()
+            .WithId()
+            .WithName()
+            .WithEmailAddress()
+            .WithDateOfBirth(DateTime.Now.AddDays(1))
+            .Build();
 
         // Act & Assert
         var exception =
@@ -184,11 +168,12 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_DateOfBirthTooOld_ShouldThrowDomainValidationException()
     {
         // Arrange
-        var tooOldDate = DateTime.Now.AddYears(-131);
-        var user = new User("test@example.com", "John Doe")
-        {
-            DateOfBirth = tooOldDate
-        };
+        var user = new UserBuilder()
+            .WithId()
+            .WithName()
+            .WithEmailAddress()
+            .WithDateOfBirth(DateTime.Now.AddYears(-131))
+            .Build();
 
         // Act & Assert
         var exception =
@@ -202,8 +187,12 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_MultipleValidationErrors_ShouldThrowExceptionWithAllErrors()
     {
         // Arrange
-        var user = new User("invalid-email", ""); // Invalid email and empty name
-        user.DateOfBirth = DateTime.Now.AddDays(1); // Future date
+        var user = new UserBuilder()
+            .WithId()
+            .WithDateOfBirth(DateTime.Now.AddDays(1))
+            .Build();
+        user.Name = "";
+        user.Email = "invalid-email";
 
         // Act & Assert
         var exception =
@@ -220,11 +209,12 @@ public class UserValidatorTests
     public async Task ValidateUserAsync_EdgeCaseDateOfBirth_ShouldNotThrowException()
     {
         // Arrange
-        var todayDate = DateTime.Now.Date;
-        var user = new User("test@example.com", "John Doe")
-        {
-            DateOfBirth = todayDate
-        };
+        var user = new UserBuilder()
+            .WithId()
+            .WithName()
+            .WithEmailAddress()
+            .WithDateOfBirth(DateTime.Now.Date)
+            .Build();
 
         // Act & Assert
         await UserValidator.ValidateUserAsync(user);

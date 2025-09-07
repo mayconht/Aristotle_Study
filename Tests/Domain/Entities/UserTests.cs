@@ -8,20 +8,23 @@ public class UserTests
 {
     #region Constructor Tests
 
-    private const string Email = "test@example.com";
-    private const string Name = "Test User";
-
     [Fact]
     public void Constructor_WithValidEmailAndName_ShouldCreateUser()
     {
+        // Arrange
+        const string email = "test@example.com";
+        const string name = "Test User";
+
         // Act
-        var user = new User(Email, Name);
+        var user = new UserBuilder()
+            .WithEmailAddress(email)
+            .WithName(name)
+            .Build();
 
         // Assert
         Assert.NotNull(user);
-        Assert.Equal(Email, user.Email);
-        Assert.Equal(Name, user.Name);
-        //TODO: This will be auto generated when DTos are implemented
+        Assert.Equal(email, user.Email);
+        Assert.Equal(name, user.Name);
         Assert.Equal(Guid.Empty, user.Id);
         Assert.Null(user.DateOfBirth);
     }
@@ -30,7 +33,10 @@ public class UserTests
     public void Constructor_WithEmptyEmail_ShouldCreateUser()
     {
         // Arrange & Act
-        var user = new User("", "Test User");
+        var user = new UserBuilder()
+            .WithEmailAddress("")
+            .WithName("Test User")
+            .Build();
 
         // Assert
         Assert.NotNull(user);
@@ -41,7 +47,10 @@ public class UserTests
     public void Constructor_WithNullEmail_ShouldCreateUser()
     {
         // Arrange & Act
-        var user = new User(null!, Name);
+        var user = new UserBuilder()
+            .WithEmailAddress(null!)
+            .WithName("Test User")
+            .Build();
 
         // Assert
         Assert.NotNull(user);
@@ -52,7 +61,10 @@ public class UserTests
     public void Constructor_WithNullName_ShouldCreateUser()
     {
         // Arrange & Act
-        var user = new User(Email, null!);
+        var user = new UserBuilder()
+            .WithEmailAddress("test@example.com")
+            .WithName(null!)
+            .Build();
 
         // Assert
         Assert.NotNull(user);
@@ -67,7 +79,7 @@ public class UserTests
     public void Id_Property_CanBeSetAndRetrieved()
     {
         // Arrange
-        var user = new UserBuilder().Build();
+        var user = new UserBuilder().WithName().WithEmailAddress().Build();
         var newId = Guid.NewGuid();
 
         // Act
@@ -81,7 +93,7 @@ public class UserTests
     public void Name_Property_CanBeSetAndRetrieved()
     {
         // Arrange
-        var user = new UserBuilder().Build();
+        var user = new UserBuilder().WithEmailAddress().Build();
         const string newName = "Updated Name";
 
         // Act
@@ -95,7 +107,7 @@ public class UserTests
     public void Email_Property_CanBeSetAndRetrieved()
     {
         // Arrange
-        var user = new UserBuilder().Build();
+        var user = new UserBuilder().WithName().Build();
         const string newEmail = "updated@example.com";
 
         // Act
@@ -109,7 +121,7 @@ public class UserTests
     public void DateOfBirth_Property_CanBeSetAndRetrieved()
     {
         // Arrange
-        var user = new UserBuilder().Build();
+        var user = new UserBuilder().WithName().WithEmailAddress().Build();
         var dateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         // Act
@@ -123,7 +135,11 @@ public class UserTests
     public void DateOfBirth_Property_CanBeSetToNull()
     {
         // Arrange
-        var user = new UserBuilder().WithDateOfBirth(DateTime.Today).Build();
+        var user = new UserBuilder()
+            .WithName()
+            .WithEmailAddress()
+            .WithDateOfBirth(DateTime.Today)
+            .Build();
 
         // Act
         user.DateOfBirth = null;
@@ -141,6 +157,7 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
+            .WithName()
             .WithEmailAddress("builder@example.com")
             .Build();
 
@@ -153,6 +170,7 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
+            .WithName()
             .WithEmailAddress()
             .Build();
 
@@ -168,6 +186,7 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
+            .WithName()
             .WithInvalidEmail()
             .Build();
 
@@ -180,6 +199,8 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
+            .WithName()
+            .WithEmailAddress()
             .WithAdultAge()
             .Build();
 
@@ -194,12 +215,15 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
+            .WithName()
+            .WithEmailAddress()
             .WithMinorAge()
             .Build();
 
         // Assert
         Assert.NotNull(user.DateOfBirth);
         var age = DateTime.Today.Year - user.DateOfBirth.Value.Year;
+        if (user.DateOfBirth.Value.DayOfYear > DateTime.Today.DayOfYear) age--;
         Assert.True(age < 18);
     }
 
@@ -239,6 +263,7 @@ public class UserTests
 
         // Act
         var user = new UserBuilder()
+            .WithEmailAddress()
             .WithName(longName)
             .Build();
 
@@ -254,6 +279,7 @@ public class UserTests
 
         // Act
         var user = new UserBuilder()
+            .WithName()
             .WithEmailAddress(longEmail)
             .Build();
 
@@ -269,6 +295,8 @@ public class UserTests
 
         // Act
         var user = new UserBuilder()
+            .WithName()
+            .WithEmailAddress()
             .WithDateOfBirth(futureDate)
             .Build();
 

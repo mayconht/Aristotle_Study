@@ -1,6 +1,7 @@
 using Aristotle.Application;
 using Aristotle.Application.DTOs;
 using Aristotle.Domain.Entities;
+using Aristotle.UnitTests.Builders;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -23,11 +24,12 @@ public class MappingProfileTests
     [Fact]
     public void User_To_UserDto_Maps_All_Properties()
     {
-        var user = new User("test@example.com", "Test User")
-        {
-            Id = Guid.NewGuid(),
-            DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 1, DateTimeKind.Utc)
-        };
+        var user = new UserBuilder()
+            .WithId()
+            .WithName("Test User")
+            .WithEmailAddress("test@example.com")
+            .WithDateOfBirth(new DateTime(1990, 1, 1, 0, 0, 1, DateTimeKind.Utc))
+            .Build();
 
         var dto = _mapper.Map<UserResponseDto>(user);
 
@@ -40,12 +42,11 @@ public class MappingProfileTests
     [Fact]
     public void UserCreateDto_To_User_Maps_All_Properties()
     {
-        var dto = new UserCreateDto
-        {
-            Name = "Test User",
-            Email = "test@example.com",
-            DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 1, DateTimeKind.Utc)
-        };
+        var dto = new UserBuilder()
+            .WithName("Test User")
+            .WithEmailAddress("test@example.com")
+            .WithDateOfBirth(new DateTime(1990, 1, 1, 0, 0, 1, DateTimeKind.Utc))
+            .BuildCreateDto();
 
         var user = _mapper.Map<User>(dto);
 
@@ -57,12 +58,11 @@ public class MappingProfileTests
     [Fact]
     public void UserUpdateDto_To_User_Maps_All_Properties()
     {
-        var dto = new UserUpdateDto
-        {
-            Name = "Updated User",
-            Email = "updated@example.com",
-            DateOfBirth = new DateTime(1995, 5, 5, 0, 0, 1, DateTimeKind.Utc)
-        };
+        var dto = new UserBuilder()
+            .WithName("Updated User")
+            .WithEmailAddress("updated@example.com")
+            .WithDateOfBirth(new DateTime(1995, 5, 5, 0, 0, 1, DateTimeKind.Utc))
+            .BuildUserUpdateDto();
 
         var user = _mapper.Map<User>(dto);
 

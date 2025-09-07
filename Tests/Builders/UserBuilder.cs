@@ -100,11 +100,11 @@ public class UserBuilder
     }
 
     /// <summary>
-    /// Generates a date of birth for a minor (1-17 years old).
+    /// Generates a date of birth for a minor (< 18 years old).
     /// </summary>
     public UserBuilder WithMinorAge()
     {
-        _dateOfBirth = _faker.Date.Between(DateTime.Today.AddYears(-17), DateTime.Today.AddYears(-1));
+        _dateOfBirth = _faker.Date.Between(DateTime.Today.AddYears(-17), DateTime.Today.AddDays(-1));
         return this;
     }
 

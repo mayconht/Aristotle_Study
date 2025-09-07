@@ -3,7 +3,6 @@ using Aristotle.Domain.Entities;
 using Aristotle.Domain.Interfaces;
 using Aristotle.Domain.Exceptions;
 using Aristotle.Application.Exceptions;
-using Aristotle.Application;
 
 namespace Aristotle.Application.Service;
 
@@ -51,9 +50,7 @@ public class UserService
 
             _logger.LogDebug("Getting user with ID: {UserId}", id);
             var user = await _userRepository.GetByIdAsync(id);
-            if (user == null) throw new UserNotFoundException(id);
-
-            return user;
+            return user ?? throw new UserNotFoundException(id);
         }
         catch (Exception ex)
         {
@@ -92,9 +89,7 @@ public class UserService
 
             _logger.LogDebug("Getting user by email");
             var user = await _userRepository.GetByEmailAsync(email);
-            if (user == null) throw new UserEmailNotFoundException(email);
-
-            return user;
+            return user ?? throw new UserEmailNotFoundException(email);
         }
         catch (Exception ex)
         {

@@ -76,8 +76,8 @@ public class UserRepositoryTests
     [Fact]
     public async Task GetAllAsync_ReturnsAllUsers()
     {
-        var u1 = new UserBuilder().WithId().WithEmailAddress().Build();
-        var u2 = new UserBuilder().WithId().WithEmailAddress().Build();
+        var u1 = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
+        var u2 = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
 
         await using (var context = new ApplicationDbContext(_options))
         {
@@ -98,8 +98,8 @@ public class UserRepositoryTests
     [Fact]
     public async Task GetByEmailAsync_ReturnsUser_WhenExists()
     {
-        var email = "test@x.com";
-        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
+        var u = new UserBuilder().WithId().WithEmailAddress("test@x.com").WithName().Build();
+
         await using (var context = new ApplicationDbContext(_options))
         {
             context.Users.Add(u);
@@ -109,7 +109,7 @@ public class UserRepositoryTests
         await using (var context = new ApplicationDbContext(_options))
         {
             var repo = new UserRepository(context, _loggerMock.Object);
-            var result = await repo.GetByEmailAsync(email);
+            var result = await repo.GetByEmailAsync(u.Email);
             Assert.NotNull(result);
             Assert.Equal(u.Id, result.Id);
             Assert.Equal(u.Name, result.Name);
@@ -174,7 +174,6 @@ public class UserRepositoryTests
     [Fact]
     public async Task UpdateAsync_UpdatesUser_WhenExists()
     {
-        var id = Guid.NewGuid();
         var originalUser = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
@@ -182,7 +181,7 @@ public class UserRepositoryTests
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
-        var updatedUser = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
+        var updatedUser = new UserBuilder().WithId(originalUser.Id).WithEmailAddress("updated@example.com").WithName("Updated Name").Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             var repo = new UserRepository(context, _loggerMock.Object);
@@ -195,7 +194,7 @@ public class UserRepositoryTests
 
         await using (var context = new ApplicationDbContext(_options))
         {
-            var savedUser = await context.Users.FindAsync([id], TestContext.Current.CancellationToken);
+            var savedUser = await context.Users.FindAsync([originalUser.Id], TestContext.Current.CancellationToken);
             Assert.NotNull(savedUser);
             Assert.Equal(updatedUser.Name, savedUser.Name);
             Assert.Equal(updatedUser.Email, savedUser.Email);
@@ -224,10 +223,9 @@ public class UserRepositoryTests
     [Fact]
     public async Task DeleteAsync_ReturnsTrue_WhenExists()
     {
-        var id = Guid.NewGuid();
+        var user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
-            var user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
             context.Users.Add(user);
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
@@ -235,9 +233,9 @@ public class UserRepositoryTests
         await using (var context = new ApplicationDbContext(_options))
         {
             var repo = new UserRepository(context, _loggerMock.Object);
-            var result = await repo.DeleteAsync(id);
+            var result = await repo.DeleteAsync(user.Id);
             Assert.True(result);
-            var deleted = await context.Users.FindAsync([id], TestContext.Current.CancellationToken);
+            var deleted = await context.Users.FindAsync([user.Id], TestContext.Current.CancellationToken);
             Assert.Null(deleted);
         }
     }

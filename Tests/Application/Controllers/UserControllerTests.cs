@@ -54,8 +54,10 @@ public class UserControllerTests
     public async Task GetUserByEmail_ReturnsOk()
     {
         // Arrange
-        var user = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
-        var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+        var userBuilder = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress();
+        var user = userBuilder.Build();
+        var userResponse = userBuilder.BuildResponseDto();
+
         _serviceMock.Setup(s => s.GetUserByEmailAsync(user.Email)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
 
@@ -76,8 +78,10 @@ public class UserControllerTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var user = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
-        var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+        var userBuilder = new UserBuilder().WithAdultAge().WithId(id).WithName().WithEmailAddress();
+        var user = userBuilder.Build();
+        var userResponse = userBuilder.BuildResponseDto();
+
         _serviceMock.Setup(s => s.GetUserByIdAsync(id)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
 
@@ -96,9 +100,19 @@ public class UserControllerTests
     public async Task CreateUser_ReturnsCreated()
     {
         // Arrange
-        var userCreateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
-        var user = new User(userCreateDto.Email, userCreateDto.Name) { Id = Guid.NewGuid() };
-        var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+        var userCreateDto = new UserBuilder().WithAdultAge().WithName().WithEmailAddress().BuildCreateDto();
+        var user = new UserBuilder()
+            .WithId()
+            .WithEmailAddress(userCreateDto.Email)
+            .WithName(userCreateDto.Name)
+            .WithDateOfBirth(userCreateDto.DateOfBirth)
+            .Build();
+        var userResponse = new UserBuilder()
+            .WithId(user.Id)
+            .WithEmailAddress(user.Email)
+            .WithName(user.Name)
+            .WithDateOfBirth(user.DateOfBirth)
+            .BuildResponseDto();
 
         _mapperMock.Setup(m => m.Map<User>(userCreateDto)).Returns(user);
         _serviceMock.Setup(s => s.CreateUserAsync(user)).ReturnsAsync(user);
@@ -141,10 +155,20 @@ public class UserControllerTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var userUpdateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress()
-            .BuildUserUpdateDto();
-        var user = new User(userUpdateDto.Email, userUpdateDto.Name) { Id = id };
-        var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+        var userUpdateDto = new UserBuilder().WithAdultAge().WithName().WithEmailAddress().BuildUserUpdateDto();
+        var user = new UserBuilder()
+            .WithId(id)
+            .WithEmailAddress(userUpdateDto.Email)
+            .WithName(userUpdateDto.Name)
+            .WithDateOfBirth(userUpdateDto.DateOfBirth)
+            .Build();
+        var userResponse = new UserBuilder()
+            .WithId(user.Id)
+            .WithEmailAddress(user.Email)
+            .WithName(user.Name)
+            .WithDateOfBirth(user.DateOfBirth)
+            .BuildResponseDto();
+
         _mapperMock.Setup(m => m.Map<User>(userUpdateDto)).Returns(user);
         _serviceMock.Setup(s => s.UpdateUserAsync(user)).ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
@@ -241,7 +265,12 @@ public class UserControllerTests
             new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build(),
             new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build()
         };
-        var userResponse = users.Select(u => new UserResponseDto { Id = u.Id, Name = u.Name, Email = u.Email })
+        var userResponse = users.Select(u => new UserBuilder()
+                .WithId(u.Id)
+                .WithName(u.Name)
+                .WithEmailAddress(u.Email)
+                .WithDateOfBirth(u.DateOfBirth)
+                .BuildResponseDto())
             .ToList();
         _serviceMock.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
         _mapperMock.Setup(m => m.Map<IEnumerable<UserResponseDto>>(users)).Returns(userResponse);
