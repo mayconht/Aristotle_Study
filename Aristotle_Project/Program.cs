@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var openBrowser = false;
+var openBrowser = builder.Configuration.GetValue<bool>("Swagger:OpenBrowser", false);
 
 builder.Services.AddSwaggerGen(c =>
 {
