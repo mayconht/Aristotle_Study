@@ -30,6 +30,30 @@ public class UserServiceTests
     }
 
     [Fact]
+    public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new UserService(null!, _loggerMock.Object));
+    }
+
+    [Fact]
+    public void Constructor_ShouldThrowArgumentNullException_WhenLoggerIsNull()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new UserService(_userRepositoryMock.Object, null!));
+    }
+
+    [Fact]
+    public void Constructor_ShouldCreateInstance_WhenParametersAreValid()
+    {
+        // Act
+        var service = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+        // Assert
+        Assert.NotNull(service);
+        Assert.IsType<UserService>(service);
+    }
+
+    [Fact]
     public async Task GetUserByIdAsync_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
