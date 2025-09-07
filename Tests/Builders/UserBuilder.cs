@@ -71,7 +71,7 @@ public class UserBuilder
         _email = _faker.Internet.Email();
         return this;
     }
-    
+
     /// <summary>
     /// Sets the user date of birth.
     /// </summary>
@@ -80,7 +80,7 @@ public class UserBuilder
         _dateOfBirth = dateOfBirth;
         return this;
     }
-    
+
     /// <summary>
     /// Sets an invalid email format for testing validation.
     /// </summary>
