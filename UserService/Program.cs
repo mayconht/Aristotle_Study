@@ -15,7 +15,7 @@ var openBrowser = false;
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aristotle API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService API", Version = "v1" });
 
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -27,8 +27,22 @@ builder.Services.AddControllers();
 
 // Here I am super lazy but if you want to properly make it interchangeable,
 // you can use a configuration file or environment variables to set the connection string.
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Database provider selection based on connection string
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (connectionString != null && (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://")))
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
+else if (connectionString != null && connectionString.StartsWith("Data Source="))
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    throw new InvalidOperationException("Unsupported or missing connection string format for DefaultConnection.");
+}
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<UserService>();
@@ -62,8 +76,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Aristotle API v1");
-        c.DocumentTitle = "Aristotle API Documentation";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API v1");
+        c.DocumentTitle = "UserService API Documentation";
     });
     
     var swaggerUrl = app.Configuration["Swagger:Url"];

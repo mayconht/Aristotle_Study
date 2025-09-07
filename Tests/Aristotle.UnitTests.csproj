@@ -16,7 +16,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Moq" Version="4.20.70"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0"/>
         <PackageReference Include="Bogus" Version="35.6.0"/>
         <PackageReference Include="AutoMapper" Version="15.0.1"/>
@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Aristotle_Project\Aristotle.csproj"/>
+        <ProjectReference Include="..\UserService\UserService.csproj" />
     </ItemGroup>
 
 </Project>

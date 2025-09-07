@@ -20,7 +20,9 @@
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "apt-get update && apt-get install -y fonts-firacode && dotnet restore $(find . -name \"*.csproj\" | head -n 1) && dotnet build $(find . -name \"*.csproj\" | head -n 1)",
 	"postStartCommand": "dotnet watch run --project $(find . -name \"*.csproj\" | head -n 1)",
-	"portsAttributes": {
+	
+    //I still not thouth about this, maybe it is not needed, will have to think about multiple services development
+    "portsAttributes": {
 		"3000": {
 			"label": "User Service",
 			"description": "User Service running on port 3000",
