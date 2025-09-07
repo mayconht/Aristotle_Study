@@ -153,7 +153,7 @@ public class UserTests
     {
         // Arrange & Act
         var user = new UserBuilder()
-            .WithValidEmail()
+            .WithEmailAddress()
             .Build();
 
         // Assert
