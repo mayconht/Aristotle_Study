@@ -108,7 +108,8 @@ public class UserController : ControllerBase
 
         // CreatedAtAction returns a 201 Created response with a location header pointing to the newly created resource.
         // It also includes the created user in the response body.
-        return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, _mapper.Map<UserResponseDto>(createdUser));
+        return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id },
+            _mapper.Map<UserResponseDto>(createdUser));
     }
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace Aristotle.Application.DTOs;
 /// </summary>
 public class UserUpdateDto
 {
-  /// <summary>
+    /// <summary>
     /// Constructor for UserUpdateDto.
     /// </summary>
     public UserUpdateDto()

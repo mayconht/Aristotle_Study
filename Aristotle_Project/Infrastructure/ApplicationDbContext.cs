@@ -44,7 +44,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(u => u.Id)
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("NEWID()");
-            entity.Property(u => u.Name).IsRequired().HasMaxLength(130); // TODO: This is set in so many places, should be a constant somewhere.
+            entity.Property(u => u.Name).IsRequired()
+                .HasMaxLength(130); // TODO: This is set in so many places, should be a constant somewhere.
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.DateOfBirth).IsRequired(false);
             entity.HasIndex(u => u.Email).IsUnique();
