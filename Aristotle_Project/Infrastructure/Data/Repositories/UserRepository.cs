@@ -180,7 +180,6 @@ public class UserRepository : IUserRepository
         }
         catch (RepositoryException)
         {
-            TODO:
             // TODO Review this - Here I am just rethrowing the exception, not sure if this is appropriate    
             throw;
         }
