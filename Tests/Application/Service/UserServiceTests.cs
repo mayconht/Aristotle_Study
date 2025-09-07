@@ -225,7 +225,7 @@ public class UserServiceTests
     {
         // Arrange
         var nu = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
-        
+
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(nu.Email)).ReturnsAsync((User?)null);
         _userRepositoryMock.Setup(r => r.AddAsync(nu)).ReturnsAsync(nu);
 
@@ -274,7 +274,7 @@ public class UserServiceTests
         var ex = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         var other = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         _userRepositoryMock.Setup(r => r.GetByIdAsync(ex.Id)).ReturnsAsync(ex);
-        
+
         var up = new User(ex.Email, ex.Name)
         {
             Id = ex.Id,
@@ -358,7 +358,7 @@ public class UserServiceTests
     public async Task CreateUserAsync_ShouldWrapException_OnRepoAddError()
     {
         // Arrange
-       var nu = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+        var nu = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
 
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(nu.Email)).ReturnsAsync((User?)null);
         _userRepositoryMock.Setup(r => r.AddAsync(nu)).ThrowsAsync(new Exception("Add error"));
@@ -379,7 +379,7 @@ public class UserServiceTests
     public async Task UpdateUserAsync_ShouldWrapException_OnRepoUpdateError()
     {
         // Arrange
-        var existing =  new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+        var existing = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
 
         existing.Id = UserId;
         var up = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
