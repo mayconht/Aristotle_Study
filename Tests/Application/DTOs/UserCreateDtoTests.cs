@@ -18,7 +18,7 @@ public class UserCreateDtoTests
         var name = "Test User";
         var email = "test@example.com";
         var dob = new DateTime(2000, 1, 1, 0, 0, 1, DateTimeKind.Utc);
-        
+
         // Act
         var dto = new UserCreateDto
         {
@@ -26,7 +26,7 @@ public class UserCreateDtoTests
             Email = email,
             DateOfBirth = dob
         };
-        
+
         // Assert
         Assert.Equal(name, dto.Name);
         Assert.Equal(email, dto.Email);
@@ -43,7 +43,7 @@ public class UserCreateDtoTests
             Email = "test@example.com",
             DateOfBirth = new DateTime(1999, 12, 31, 0, 0, 1, DateTimeKind.Utc)
         };
-        
+
         // Assert
         Assert.Equal("Test User", dto.Name);
         Assert.Equal("test@example.com", dto.Email);
@@ -55,16 +55,16 @@ public class UserCreateDtoTests
     {
         // Arrange
         var dto = new UserCreateDto
-            {
-                Name = "A",
-                Email = "a@b.com",
-                DateOfBirth = new DateTime(1995, 5, 5, 0, 0, 1, DateTimeKind.Utc)
-            };
-        
+        {
+            Name = "A",
+            Email = "a@b.com",
+            DateOfBirth = new DateTime(1995, 5, 5, 0, 0, 1, DateTimeKind.Utc)
+        };
+
         // Act
         var json = JsonSerializer.Serialize(dto);
         var deserialized = JsonSerializer.Deserialize<UserCreateDto>(json);
-        
+
         // Assert
         Assert.Equal(dto.Name, deserialized!.Name);
         Assert.Equal(dto.Email, deserialized.Email);
@@ -76,7 +76,7 @@ public class UserCreateDtoTests
     {
         // Arrange
         var dto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
-        
+
         // Act & Assert
         var ctx = new ValidationContext(dto);
         Validator.ValidateObject(dto, ctx, true);
@@ -97,7 +97,7 @@ public class UserCreateDtoTests
             Email = email!,
             DateOfBirth = null
         };
-        
+
         // Act & Assert
         var ctx = new ValidationContext(dto);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(dto, ctx, true));
