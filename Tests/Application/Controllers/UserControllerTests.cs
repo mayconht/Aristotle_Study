@@ -2,6 +2,7 @@ using Aristotle.Controllers;
 using Aristotle.Domain.Entities;
 using Aristotle.Application.Service;
 using Aristotle.Application.DTOs;
+using Aristotle.UnitTests.Builders;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -52,13 +53,19 @@ namespace Aristotle.UnitTests.Application.Controllers
         [Fact]
         public async Task GetUserByEmail_ReturnsOk()
         {
-            const string email = "test@example.com";
-            var user = new User(email, "Name") { Id = Guid.NewGuid() };
-            var userResponse = new UserResponseDto() { Id = user.Id, Name = user.Name, Email = user.Email };
-            _serviceMock.Setup(s => s.GetUserByEmailAsync(email)).ReturnsAsync(user);
-            _mapperMock.Setup(m => m.Map< UserResponseDto>(user)).Returns(userResponse);
+            // Arrange
+            var user = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
+            var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+            _serviceMock.Setup(s => s.GetUserByEmailAsync(user.Email)).ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
 
-            var result = await _controller.GetUserByEmail(email);
+            // Act
+            var result = await _controller.GetUserByEmail(user.Email);
+            
+            // Assert
+            _serviceMock.Verify(s => s.GetUserByEmailAsync(user.Email), Times.Once);
+            _mapperMock.Verify(m => m.Map<UserResponseDto>(user), Times.Once);
+            Assert.IsType<OkObjectResult>(result);
             var ok = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, ok.StatusCode);
             Assert.Equal(userResponse, ok.Value);
@@ -69,7 +76,7 @@ namespace Aristotle.UnitTests.Application.Controllers
         {
             // Arrange
             var id = Guid.NewGuid();
-            var user = new User("e@x.com", "Name") { Id = id };
+            var user = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
             var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
             _serviceMock.Setup(s => s.GetUserByIdAsync(id)).ReturnsAsync(user);
             _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
@@ -89,9 +96,10 @@ namespace Aristotle.UnitTests.Application.Controllers
         public async Task CreateUser_ReturnsCreated()
         {
             // Arrange
-            var userCreateDto = new UserCreateDto { Name = "Name", Email = "abc@x.com" };
+            var userCreateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
             var user = new User(userCreateDto.Email, userCreateDto.Name) { Id = Guid.NewGuid() };
             var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
+           
             _mapperMock.Setup(m => m.Map<User>(userCreateDto)).Returns(user);
             _serviceMock.Setup(s => s.CreateUserAsync(user)).ReturnsAsync(user);
             _mapperMock.Setup(m => m.Map<UserResponseDto>(user)).Returns(userResponse);
@@ -99,6 +107,7 @@ namespace Aristotle.UnitTests.Application.Controllers
             // Act
             var result = await _controller.CreateUser(userCreateDto);
             var created = Assert.IsType<CreatedAtActionResult>(result);
+            
             // Assert
             _mapperMock.Verify(m => m.Map<User>(userCreateDto), Times.Once);
             _serviceMock.Verify(s => s.CreateUserAsync(user), Times.Once);
@@ -114,9 +123,11 @@ namespace Aristotle.UnitTests.Application.Controllers
         {
             // Arrange
             _controller.ModelState.AddModelError("Name", "Required");
-            var userCreateDto = new UserCreateDto { Name = "", Email = "a@x.com" };
+            var userCreateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
+            
             // Act
             var result = await _controller.CreateUser(userCreateDto);
+            
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
@@ -130,7 +141,8 @@ namespace Aristotle.UnitTests.Application.Controllers
         {
             // Arrange
             var id = Guid.NewGuid();
-            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "a@x.com" };
+            var userUpdateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress()
+                .BuildUserUpdateDto();
             var user = new User(userUpdateDto.Email, userUpdateDto.Name) { Id = id };
             var userResponse = new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email };
             _mapperMock.Setup(m => m.Map<User>(userUpdateDto)).Returns(user);
@@ -154,7 +166,8 @@ namespace Aristotle.UnitTests.Application.Controllers
         {
             // Arrange
             _controller.ModelState.AddModelError("e","err");
-            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "e@x.com" };
+            var userUpdateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithInvalidEmail()
+                .BuildUserUpdateDto();
             
             // Act
             var result = await _controller.UpdateUser(Guid.NewGuid(), userUpdateDto);
@@ -171,7 +184,8 @@ namespace Aristotle.UnitTests.Application.Controllers
         public async Task UpdateUser_IdMismatch_ReturnsBadRequest()
         {
             // Arrange
-            var userUpdateDto = new UserUpdateDto { Name = "Name", Email = "a@x.com" };
+            var userUpdateDto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().
+                BuildUserUpdateDto();
             const string errorMessage = "The ID in the URL must match the ID in the user data.";
             _controller.ModelState.AddModelError("Id", errorMessage);
 
@@ -222,7 +236,9 @@ namespace Aristotle.UnitTests.Application.Controllers
         public async Task GetAllUsers_ReturnsOk()
         {
             // Arrange
-            var users = new List<User> { new User("e@x.com","Name") };
+            var users = new List<User> {
+                new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build()
+            };
             var userResponse = users.Select(u => new UserResponseDto { Id = u.Id, Name = u.Name, Email = u.Email }).ToList();
             _serviceMock.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
             _mapperMock.Setup(m => m.Map<IEnumerable<UserResponseDto>>(users)).Returns(userResponse);
