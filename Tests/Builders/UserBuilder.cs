@@ -1,3 +1,4 @@
+using Aristotle.Application.DTOs;
 using Aristotle.Domain.Entities;
 using Bogus;
 
@@ -11,20 +12,11 @@ namespace Aristotle.UnitTests.Builders;
 /// </summary>
 public class UserBuilder
 {
-    private readonly Faker _faker;
+    private readonly Faker _faker = new();
     private Guid _id;
-    private string _name;
-    private string _email;
+    private string? _name;
+    private string? _email;
     private DateTime? _dateOfBirth;
-
-    public UserBuilder()
-    {
-        _faker = new Faker();
-        _id = Guid.NewGuid(); //TODO when DTOs are used, remove Id generation from here.
-        _name = _faker.Name.FullName();
-        _email = _faker.Internet.Email();
-        _dateOfBirth = null;
-    }
 
     /// <summary>
     /// Sets the user ID.
@@ -36,11 +28,29 @@ public class UserBuilder
     }
 
     /// <summary>
-    /// Sets the use rname.
+    /// Sets the user ID to a new GUID.
+    /// </summary>
+    public UserBuilder WithId()
+    {
+        _id = Guid.NewGuid();
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the use name.
     /// </summary>
     public UserBuilder WithName(string name)
     {
         _name = name;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the use name using Faker to generate a realistic name.
+    /// </summary>
+    public UserBuilder WithName()
+    {
+        _name = _faker.Name.FullName();
         return this;
     }
 
@@ -54,6 +64,15 @@ public class UserBuilder
     }
 
     /// <summary>
+    /// Sets the user email address using Faker to generate a realistic email.
+    /// </summary>
+    public UserBuilder WithEmailAddress()
+    {
+        _email = _faker.Internet.Email();
+        return this;
+    }
+    
+    /// <summary>
     /// Sets the user date of birth.
     /// </summary>
     public UserBuilder WithDateOfBirth(DateTime? dateOfBirth)
@@ -61,16 +80,7 @@ public class UserBuilder
         _dateOfBirth = dateOfBirth;
         return this;
     }
-
-    /// <summary>
-    /// Generates a valid email using Faker.
-    /// </summary>
-    public UserBuilder WithValidEmail()
-    {
-        _email = _faker.Internet.Email();
-        return this;
-    }
-
+    
     /// <summary>
     /// Sets an invalid email format for testing validation.
     /// </summary>
@@ -118,9 +128,49 @@ public class UserBuilder
     /// </summary>
     public User Build()
     {
-        return new User(_email, _name)
+        return new User(_email!, _name!)
         {
             Id = _id,
+            DateOfBirth = _dateOfBirth
+        };
+    }
+
+    /// <Summary>
+    /// Builds a UserCreateDto with the configured properties.
+    /// </Summary>
+    public UserCreateDto BuildCreateDto()
+    {
+        return new UserCreateDto
+        {
+            Name = _name!,
+            Email = _email!,
+            DateOfBirth = _dateOfBirth
+        };
+    }
+
+    /// <Summary>
+    /// Builds a UserResponseDto with the configured properties.
+    /// </Summary>
+    public UserResponseDto BuildResponseDto()
+    {
+        return new UserResponseDto
+        {
+            Id = _id,
+            Name = _name!,
+            Email = _email!,
+            DateOfBirth = _dateOfBirth
+        };
+    }
+
+    /// <Summary>
+    /// Builds a UserUpdateDto with the configured properties.
+    /// </Summary>
+    public UserUpdateDto BuildUserUpdateDto()
+    {
+        return new UserUpdateDto
+        {
+            Name = _name!,
+            Email = _email!,
             DateOfBirth = _dateOfBirth
         };
     }
