@@ -15,13 +15,18 @@ public class User
     /// <summary>
     /// User constructor.
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="email"></param>
     /// <param name="name"></param>
-    public User(string email, string name)
+    /// <param name="dateOfBirth"></param>
+    public User(Guid id, string email, string name, DateTime? dateOfBirth = null)
     {
+        Id = id;
         Email = email;
         Name = name;
+        DateOfBirth = dateOfBirth;
     }
+
 
     /// <summary>
     /// User Generated Id.

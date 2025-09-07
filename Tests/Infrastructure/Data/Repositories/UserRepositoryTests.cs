@@ -52,8 +52,9 @@ public class UserRepositoryTests
     [Fact]
     public async Task GetAllAsync_ReturnsAllUsers()
     {
-        var u1 = new User("a@x.com", "A") { Id = Guid.NewGuid() };
-        var u2 = new User("b@x.com", "B") { Id = Guid.NewGuid() };
+        var u1 = new UserBuilder().WithId().WithEmailAddress().Build();
+        var u2 = new UserBuilder().WithId().WithEmailAddress().Build();
+
         await using (var context = new ApplicationDbContext(_options))
         {
             context.Users.AddRange(u1, u2);
@@ -74,7 +75,7 @@ public class UserRepositoryTests
     public async Task GetByEmailAsync_ReturnsUser_WhenExists()
     {
         var email = "test@x.com";
-        var u = new User(email, "Name") { Id = Guid.NewGuid() };
+        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             context.Users.Add(u);
@@ -95,7 +96,7 @@ public class UserRepositoryTests
     [Fact]
     public async Task AddAsync_AddsUser_WhenValid()
     {
-        var u = new User("add@x.com", "Name") { Id = Guid.NewGuid() };
+        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             var repo = new UserRepository(context, _loggerMock.Object);
@@ -125,7 +126,7 @@ public class UserRepositoryTests
         var context = new ApplicationDbContext(_options);
         var repo = new UserRepository(context, _loggerMock.Object);
         await context.DisposeAsync();
-        var u = new User("x@x.com", "Name") { Id = Guid.NewGuid() };
+        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await Assert.ThrowsAsync<DatabaseException>(() => repo.AddAsync(u));
     }
 
@@ -142,7 +143,7 @@ public class UserRepositoryTests
     {
         await using var context = new ApplicationDbContext(_options);
         var repo = new UserRepository(context, _loggerMock.Object);
-        var u = new User("e@x.com", "Name") { Id = Guid.NewGuid() };
+        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await Assert.ThrowsAsync<RepositoryException>(() => repo.UpdateAsync(u));
     }
 
@@ -150,14 +151,14 @@ public class UserRepositoryTests
     public async Task UpdateAsync_UpdatesUser_WhenExists()
     {
         var id = Guid.NewGuid();
-        var originalUser = new User("o@x.com", "Old") { Id = id };
+        var originalUser = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             context.Users.Add(originalUser);
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
-        var updatedUser = new User("n@x.com", "New") { Id = id };
+        var updatedUser = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await using (var context = new ApplicationDbContext(_options))
         {
             var repo = new UserRepository(context, _loggerMock.Object);
@@ -182,7 +183,7 @@ public class UserRepositoryTests
     {
         var context = new ApplicationDbContext(_options);
         var repo = new UserRepository(context, _loggerMock.Object);
-        var u = new User("e@x.com", "Name") { Id = Guid.NewGuid() };
+        var u = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         await context.DisposeAsync();
         await Assert.ThrowsAsync<DatabaseException>(() => repo.UpdateAsync(u));
     }
@@ -202,7 +203,7 @@ public class UserRepositoryTests
         var id = Guid.NewGuid();
         await using (var context = new ApplicationDbContext(_options))
         {
-            var user = new User("d@x.com", "Delete") { Id = id };
+            var user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
             context.Users.Add(user);
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }

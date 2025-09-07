@@ -15,11 +15,9 @@ public class UserServiceTests
     private static readonly Guid UserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
     private readonly Mock<ILogger<UserService>> _loggerMock;
 
-    private readonly User _user = new("test@example.com", "Test User")
-    {
-        Id = UserId,
-        DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-    };
+
+    //TODO For other tests, consider using AutoFixture to generate test data
+    private readonly User _user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
 
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly UserService _userService;
@@ -275,11 +273,7 @@ public class UserServiceTests
         var other = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().Build();
         _userRepositoryMock.Setup(r => r.GetByIdAsync(ex.Id)).ReturnsAsync(ex);
 
-        var up = new User(ex.Email, ex.Name)
-        {
-            Id = ex.Id,
-            Email = other.Email
-        };
+        var up = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(other.Email)).ReturnsAsync(other);
 
         // Act & Assert

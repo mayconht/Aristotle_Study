@@ -128,11 +128,7 @@ public class UserBuilder
     /// </summary>
     public User Build()
     {
-        return new User(_email!, _name!)
-        {
-            Id = _id,
-            DateOfBirth = _dateOfBirth
-        };
+        return new User(_id, _email!, _name!, _dateOfBirth);
     }
 
     /// <Summary>
