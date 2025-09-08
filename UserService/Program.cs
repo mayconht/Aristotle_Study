@@ -45,7 +45,7 @@ else
 }
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
 
