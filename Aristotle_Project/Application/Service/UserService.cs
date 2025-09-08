@@ -15,7 +15,7 @@ namespace Aristotle.Application.Service;
 /// Provides methods for CRUD operations on users with proper exception handling
 /// and business logic validation following hexagonal architecture principles.
 /// </summary>
-public class UserService
+public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly ILogger<UserService> _logger;
