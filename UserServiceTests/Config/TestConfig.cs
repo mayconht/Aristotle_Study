@@ -1,4 +1,4 @@
-namespace Aristotle.UnitTests.Config;
+namespace UserService.UnitTests.Config;
 
 /// <summary>
 /// Configuration class for test environment setup

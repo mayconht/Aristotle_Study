@@ -1,14 +1,14 @@
 using Aristotle.Infrastructure.Data.Repositories;
 using Aristotle.Infrastructure;
 using Aristotle.Infrastructure.Exceptions;
-using Aristotle.UnitTests.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using UserService.UnitTests.Builders;
 using Xunit;
 
 
-namespace Aristotle.UnitTests.Infrastructure.Data.Repositories;
+namespace UserService.UnitTests.Infrastructure.Data.Repositories;
 
 public class UserRepositoryTests
 {

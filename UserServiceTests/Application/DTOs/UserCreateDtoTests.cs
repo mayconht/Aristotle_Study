@@ -1,24 +1,33 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Aristotle.Application.DTOs;
+using UserService.UnitTests.Builders;
 using Xunit;
 
-namespace Aristotle.UnitTests.Application.DTOs;
+namespace UserService.UnitTests.Application.DTOs;
 
-public class UserUpdateDtoTests
+// Sometimes testing a DTO feels redundant, but it's important to ensure
+// that serialization, data annotations, and property behaviors work as expected.
+// sometimes DTOs have logic or constraints that need verification too.
+public class UserCreateDtoTests
 {
     [Fact]
     public void Constructor_WithParameters_SetsProperties()
     {
-        const string name = "Test User";
-        const string email = "test@example.com";
-        var dob = new DateTime(2000, 1, 1);
-        var dto = new UserUpdateDto
+        // Arrange
+        var name = "Test User";
+        var email = "test@example.com";
+        var dob = new DateTime(2000, 1, 1, 0, 0, 1, DateTimeKind.Utc);
+
+        // Act
+        var dto = new UserCreateDto
         {
             Name = name,
             Email = email,
             DateOfBirth = dob
         };
+
+        // Assert
         Assert.Equal(name, dto.Name);
         Assert.Equal(email, dto.Email);
         Assert.Equal(dob, dto.DateOfBirth);
@@ -27,28 +36,36 @@ public class UserUpdateDtoTests
     [Fact]
     public void ParameterlessConstructor_AllowsPropertySet()
     {
-        var dto = new UserUpdateDto
+        // Arrange & Act
+        var dto = new UserCreateDto
         {
             Name = "Test User",
             Email = "test@example.com",
-            DateOfBirth = new DateTime(1999, 12, 31)
+            DateOfBirth = new DateTime(1999, 12, 31, 0, 0, 1, DateTimeKind.Utc)
         };
+
+        // Assert
         Assert.Equal("Test User", dto.Name);
         Assert.Equal("test@example.com", dto.Email);
-        Assert.Equal(new DateTime(1999, 12, 31), dto.DateOfBirth);
+        Assert.Equal(new DateTime(1999, 12, 31, 0, 0, 1, DateTimeKind.Utc), dto.DateOfBirth);
     }
 
     [Fact]
     public void CanSerializeAndDeserialize()
     {
-        var dto = new UserUpdateDto
+        // Arrange
+        var dto = new UserCreateDto
         {
             Name = "A",
             Email = "a@b.com",
-            DateOfBirth = new DateTime(1995, 5, 5)
+            DateOfBirth = new DateTime(1995, 5, 5, 0, 0, 1, DateTimeKind.Utc)
         };
+
+        // Act
         var json = JsonSerializer.Serialize(dto);
-        var deserialized = JsonSerializer.Deserialize<UserUpdateDto>(json);
+        var deserialized = JsonSerializer.Deserialize<UserCreateDto>(json);
+
+        // Assert
         Assert.Equal(dto.Name, deserialized!.Name);
         Assert.Equal(dto.Email, deserialized.Email);
         Assert.Equal(dto.DateOfBirth, deserialized.DateOfBirth);
@@ -57,11 +74,10 @@ public class UserUpdateDtoTests
     [Fact]
     public void DataAnnotations_ValidObject_PassesValidation()
     {
-        var dto = new UserUpdateDto
-        {
-            Name = "Valid Name",
-            Email = "valid@email.com"
-        };
+        // Arrange
+        var dto = new UserBuilder().WithAdultAge().WithId().WithName().WithEmailAddress().BuildCreateDto();
+
+        // Act & Assert
         var ctx = new ValidationContext(dto);
         Validator.ValidateObject(dto, ctx, true);
     }
@@ -74,12 +90,15 @@ public class UserUpdateDtoTests
     [InlineData("Test", "not-an-email")]
     public void DataAnnotations_InvalidObject_Throws(string? name, string? email)
     {
-        var dto = new UserUpdateDto
+        // Arrange
+        var dto = new UserCreateDto
         {
             Name = name!,
             Email = email!,
             DateOfBirth = null
         };
+
+        // Act & Assert
         var ctx = new ValidationContext(dto);
         Assert.Throws<ValidationException>(() => Validator.ValidateObject(dto, ctx, true));
     }

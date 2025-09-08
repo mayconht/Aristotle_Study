@@ -5,7 +5,7 @@ using Moq;
 using System.Text.Json;
 using Xunit;
 
-namespace Aristotle.UnitTests.Infrastructure.Middleware;
+namespace UserService.UnitTests.Infrastructure.Middleware;
 
 public class GlobalExceptionHandlingMiddlewareTests
 {

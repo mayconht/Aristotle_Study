@@ -1,7 +1,7 @@
 using Aristotle.Domain.Exceptions;
 using Xunit;
 
-namespace Aristotle.UnitTests.Domain.Exceptions;
+namespace UserService.UnitTests.Domain.Exceptions;
 
 public class UserDomainExceptionTests
 {

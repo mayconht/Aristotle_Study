@@ -3,7 +3,7 @@ using Aristotle.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Aristotle.UnitTests.Infrastructure;
+namespace UserService.UnitTests.Infrastructure;
 
 public class ApplicationDbContextTests
 {

@@ -1,10 +1,10 @@
 using Aristotle.Application;
 using Aristotle.Domain.Entities;
 using Aristotle.Domain.Exceptions;
-using Aristotle.UnitTests.Builders;
+using UserService.UnitTests.Builders;
 using Xunit;
 
-namespace Aristotle.UnitTests.Application;
+namespace UserService.UnitTests.Application;
 
 public class UserValidatorTests
 {

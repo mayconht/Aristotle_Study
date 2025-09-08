@@ -1,12 +1,12 @@
 using Aristotle.Application;
 using Aristotle.Application.DTOs;
 using Aristotle.Domain.Entities;
-using Aristotle.UnitTests.Builders;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using UserService.UnitTests.Builders;
 using Xunit;
 
-namespace Aristotle.UnitTests.Application;
+namespace UserService.UnitTests.Application;
 
 public class MappingProfileTests
 {

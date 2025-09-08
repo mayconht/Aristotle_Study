@@ -1,8 +1,8 @@
 using Aristotle.Domain.Entities;
-using Aristotle.UnitTests.Builders;
+using UserService.UnitTests.Builders;
 using Xunit;
 
-namespace Aristotle.UnitTests.Domain.Entities;
+namespace UserService.UnitTests.Domain.Entities;
 
 public class UserTests
 {

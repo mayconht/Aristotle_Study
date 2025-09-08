@@ -2,7 +2,7 @@ using Aristotle.Application.DTOs;
 using Aristotle.Domain.Entities;
 using Bogus;
 
-namespace Aristotle.UnitTests.Builders;
+namespace UserService.UnitTests.Builders;
 
 /// <summary>
 /// Builder class for creating User objects in tests following the Fluent Interface pattern.

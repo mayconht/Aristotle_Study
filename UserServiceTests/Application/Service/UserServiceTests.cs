@@ -3,55 +3,55 @@ using Aristotle.Application.Service;
 using Aristotle.Domain.Entities;
 using Aristotle.Domain.Exceptions;
 using Aristotle.Domain.Interfaces;
-using Aristotle.UnitTests.Builders;
 using Microsoft.Extensions.Logging;
 using Moq;
+using UserService.UnitTests.Builders;
 using Xunit;
 
-namespace Aristotle.UnitTests.Application.Service;
+namespace UserService.UnitTests.Application.Service;
 
 public class UserServiceTests
 {
     private static readonly Guid UserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-    private readonly Mock<ILogger<UserService>> _loggerMock;
+    private readonly Mock<ILogger<Aristotle.Application.Service.UserService>> _loggerMock;
 
 
     //TODO For other tests, consider using AutoFixture to generate test data
     private readonly User _user = new UserBuilder().WithId().WithEmailAddress().WithName().Build();
 
     private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly UserService _userService;
+    private readonly Aristotle.Application.Service.UserService _userService;
 
     public UserServiceTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _loggerMock = new Mock<ILogger<UserService>>();
-        _userService = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+        _loggerMock = new Mock<ILogger<Aristotle.Application.Service.UserService>>();
+        _userService = new Aristotle.Application.Service.UserService(_userRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new UserService(null!, _loggerMock.Object));
+        Assert.Throws<ArgumentNullException>(() => new Aristotle.Application.Service.UserService(null!, _loggerMock.Object));
     }
 
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenLoggerIsNull()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new UserService(_userRepositoryMock.Object, null!));
+        Assert.Throws<ArgumentNullException>(() => new Aristotle.Application.Service.UserService(_userRepositoryMock.Object, null!));
     }
 
     [Fact]
     public void Constructor_ShouldCreateInstance_WhenParametersAreValid()
     {
         // Act
-        var service = new UserService(_userRepositoryMock.Object, _loggerMock.Object);
+        var service = new Aristotle.Application.Service.UserService(_userRepositoryMock.Object, _loggerMock.Object);
 
         // Assert
         Assert.NotNull(service);
-        Assert.IsType<UserService>(service);
+        Assert.IsType<Aristotle.Application.Service.UserService>(service);
     }
 
     [Fact]

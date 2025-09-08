@@ -3,7 +3,7 @@ using System.Text.Json;
 using Aristotle.Application.DTOs;
 using Xunit;
 
-namespace Aristotle.UnitTests.Application.DTOs;
+namespace UserService.UnitTests.Application.DTOs;
 
 public class UserResponseDtoTests
 {

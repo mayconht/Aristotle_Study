@@ -2,14 +2,14 @@ using Aristotle.Controllers;
 using Aristotle.Domain.Entities;
 using Aristotle.Application.Service;
 using Aristotle.Application.DTOs;
-using Aristotle.UnitTests.Builders;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 using AutoMapper;
+using UserService.UnitTests.Builders;
 
-namespace Aristotle.UnitTests.Application.Controllers;
+namespace UserService.UnitTests.Application.Controllers;
 
 public class UserControllerTests
 {
