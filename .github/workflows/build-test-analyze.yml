@@ -67,7 +67,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.projectBaseDir="$GITHUB_WORKSPACE" \
           /d:sonar.cs.opencover.reportsPaths="./coverage.opencover.xml" \
-          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*" \
+          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*,**/*.UnitTests/**/*" \
           /d:sonar.exclusions="**/Tests/**/*,**/bin/**,**/obj/**,**/Migrations/**,**/*.Designer.cs,**/Program.cs"
 
     - name: Build
@@ -81,12 +81,15 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/ \
           --logger trx \
-          --settings coverlet.runsettings
+          --settings coverlet.runsettings \
+          --verbosity normal
 
-    - name: Move coverage file
+    - name: Move coverage file and display details
       run: |
+        mkdir -p ./coverage
         find ./TestResults -name "coverage.opencover.xml" -exec cp {} ./coverage.opencover.xml \;
-        ls -la ./coverage.opencover.xml
+        ls -la ./coverage.opencover.xml || echo "Coverage file not found"
+        find ./TestResults -type f -name "*.xml" | grep -i coverage || echo "No coverage files found in TestResults"
 
     - name: End SonarCloud analysis
       env:
