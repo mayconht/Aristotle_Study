@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aristotle.Domain.Entities;
@@ -12,40 +13,51 @@ namespace Aristotle.Domain.Entities;
 [Table("Users")]
 public class User
 {
+
     /// <summary>
-    /// User constructor.
+    ///  Constructor for User entity.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="email"></param>
-    /// <param name="name"></param>
-    /// <param name="dateOfBirth"></param>
-    public User(Guid id, string email, string name, DateTime? dateOfBirth = null)
+    public User()
     {
-        Id = id;
-        Email = email;
-        Name = name;
-        DateOfBirth = dateOfBirth;
     }
 
+    // /// <summary>
+    // /// User constructor.
+    // /// </summary>
+    // /// <param name="id"></param>
+    // /// <param name="email"></param>
+    // /// <param name="name"></param>
+    // /// <param name="dateOfBirth"></param>
+    // public User(Guid id, string email, string name, DateTime? dateOfBirth = null)
+    // {
+    //     Id = id;
+    //     Email = email;
+    //     Name = name;
+    //     DateOfBirth = dateOfBirth;
+    // }
 
     /// <summary>
     /// User Generated Id.
     /// </summary>
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     /// <summary>
     /// User Name.
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// User Email.
     /// </summary>
-    public string Email { get; set; }
+    public required string Email { get; set; }
 
     /// <summary>
     /// User Date of Birth.
     /// This property is optional and can be null.
     /// </summary>
     public DateTime? DateOfBirth { get; set; }
+
+
 }
