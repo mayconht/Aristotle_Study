@@ -1,11 +1,11 @@
 services:
   user_service:
     build: .
-    container_name: aristotle
+    container_name: user_service
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      DATABASE_URL: Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       PORT: ${APP_PORT}
     ports:
       - "${APP_PORT}:${APP_PORT}"
@@ -15,7 +15,7 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: aristotle-postgres
+    container_name: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

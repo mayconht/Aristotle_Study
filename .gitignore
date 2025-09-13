@@ -532,3 +532,5 @@ sonar-scanner-*
 *.db
 
 TechnicalDebt.md
+
+.idea/.idea.Aristotle_Study/Docker/

@@ -10,10 +10,6 @@ FROM build AS publish
 WORKDIR /src/UserService
 RUN dotnet publish UserService.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet ef database update --no-build --project UserService.csproj
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
