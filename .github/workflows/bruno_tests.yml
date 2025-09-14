@@ -71,7 +71,7 @@ jobs:
       run: |
         mkdir -p bruno_results
         cd "$BRUNO_PATH"
-        npx @usebruno/cli run . --env-file environments/development.bru --tags=Regression --reporter-html "$RESULTS_REL_PATH/report.html" --reporter-junit "$RESULTS_REL_PATH/report.xml"
+        npx @usebruno/cli run . --env-file environments/development.bru --reporter-html "$RESULTS_REL_PATH/report.html" --reporter-junit "$RESULTS_REL_PATH/report.xml"
 
     - name: Log in to Docker Hub
       if: success()
