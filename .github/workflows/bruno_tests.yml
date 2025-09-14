@@ -1,0 +1,62 @@
+﻿name: Run Bruno Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-bruno-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >
+          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      user_service:
+        build: .
+        env:
+          DATABASE_URL: Host=postgres;Port=5432;Database=${{ secrets.POSTGRES_DB }};Username=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }}
+          PORT: ${{ secrets.APP_PORT }}
+        ports:
+          - ${{ secrets.APP_PORT }}:${{ secrets.APP_PORT }}
+        options: >
+          --health-cmd "curl --fail http://localhost:${{ secrets.APP_PORT }}/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Wait for user_service to be ready
+      run: |
+        echo "Waiting for user_service to be ready..."
+
+    - name: Run Bruno tests
+      run: |
+        mkdir -p bruno_results
+        bruno run -c bruno/UserService\ API/collection.bru -e bruno/UserService\ API/environments/local.json \
+          --reporters html junit \
+          --reporter-options html-export=bruno_results/report.html,junit-export=bruno_results/report.xml
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: bruno-test-results
+        path: bruno_results
