@@ -9,11 +9,21 @@ public class DatabaseHealthCheck : IHealthCheck
 {
     private readonly ApplicationDbContext _dbContext;
 
+    /// <summary>
+    /// Database health check constructor.
+    /// </summary>
+    /// <param name="dbContext"></param>
     public DatabaseHealthCheck(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// Defines the health check logic to verify database connectivity.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         try

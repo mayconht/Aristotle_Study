@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile> <!-- Enable XML documentation generation -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>bin\Debug\net8.0\UserService.xml</DocumentationFile>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <RootNamespace>Aristotle</RootNamespace>
