@@ -70,7 +70,7 @@ jobs:
       run: |
         mkdir -p bruno_results
         cd "$GITHUB_WORKSPACE/$BRUNO_PATH"
-        npx @usebruno/cli run . --env-file environments/development.bru --tags=Regression --reporter-html "$GITHUB_WORKSPACE/bruno_results/report.html" --reporter-junit "$GITHUB_WORKSPACE/bruno_results/report.xml"
+        npx @usebruno/cli run --env-file environments/development.bru --reporter-html "$GITHUB_WORKSPACE/bruno_results/report.html" --reporter-junit "$GITHUB_WORKSPACE/bruno_results/report.xml"
 
     - name: Log in to Docker Hub
       if: success()
