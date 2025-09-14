@@ -33,28 +33,31 @@ builder.Services.AddControllers();
 
 DotNetEnv.Env.Load("../.env");
 
-void ConfigureDatabase(WebApplicationBuilder builder)
+void ConfigureDatabase(WebApplicationBuilder internalBuilder)
 {
-    var connectionString = $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
-                          $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
-                          $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
-                          $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
-                          $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+    var useSqlite = Environment.GetEnvironmentVariable("USE_SQLITE")?.ToLower() == "true";
 
-    if (string.IsNullOrWhiteSpace(connectionString))
+    if (useSqlite)
     {
-        throw new InvalidOperationException("Connection string could not be resolved from environment variables.");
+        internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite("Data Source=users.db"));
+        Console.WriteLine("Using SQLite database.");
+        return;
     }
 
-    if (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://"))
+    var connectionString = internalBuilder.Configuration.GetConnectionString("DefaultConnection");
+
+    if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("Host="))
     {
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
+        Console.WriteLine("Using PostgreSQL database.");
     }
-    else if (connectionString.StartsWith("Data Source="))
+    else if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("Data Source="))
     {
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(connectionString));
+        Console.WriteLine("Using SQLite database from connection string.");
     }
     else
     {
