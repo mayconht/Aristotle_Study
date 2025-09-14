@@ -56,7 +56,7 @@ void ConfigureDatabase(WebApplicationBuilder internalBuilder)
 
     switch (string.IsNullOrEmpty(connectionString))
     {
-        case true when connectionString != null && connectionString.StartsWith("Host="):
+        case false when connectionString.StartsWith("Host="):
             internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
             Console.WriteLine("Using PostgreSQL database.");
