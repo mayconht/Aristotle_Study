@@ -27,15 +27,18 @@ Keep in mind that this is a simple project for educational purposes and many imp
 
 - **.NET 8.0** - Target framework
 - **ASP.NET Core Web API** - Web framework
-- **Entity Framework Core 8.0** - ORM with SQLite provider
-- **SQLite** - Lightweight database
+- **Entity Framework Core 9.0** - ORM with SQLite and PostgreSQL providers
+- **SQLite** - Lightweight database (default)
+- **PostgreSQL** - Alternative database (configurable)
+- **AutoMapper** - Object-to-object mapping
+- **DotNetEnv** - Environment variable loader
 - **Swagger/OpenAPI** - API documentation (Swashbuckle.AspNetCore)
 - **xUnit v3** - Unit testing framework
 - **Moq** - Mocking framework for tests
-- **Verify.XunitV3** - Snapshot testing
+- **Bogus** - Fake data generation for tests
 - **Coverlet** - Code coverage analysis
 - **SonarCloud** - Code quality and security analysis
-- **Docker Compose** - For SonarQube local setup (PostgreSQL + SonarQube)
+- **Docker** - Containerization
 
 ## Architecture
 
@@ -93,13 +96,13 @@ The project follows Clean Architecture principles with the following layers:
 
 2. **Run the Application**
    ```bash
-   cd Aristotle_Project
+   cd UserService
    dotnet run
    ```
 
 3. **Or Run with Hot Reload**
    ```bash
-   cd Aristotle_Project
+   cd UserService
    dotnet watch run
    ```
 
@@ -122,7 +125,7 @@ dotnet test
 dotnet test --collect:"XPlat Code Coverage"
 
 # Run from solution root
-dotnet test Tests/Aristotle.UnitTests.csproj
+dotnet test UserServiceTests/UserService.UnitTests.csproj
 ```
 
 ### SonarCloud Integration
@@ -184,7 +187,7 @@ The project uses SQLite with Entity Framework Core:
 To create new migrations:
 
 ```bash
-cd Aristotle_Project
+cd UserService
 dotnet ef migrations add <MigrationName>
 dotnet ef database update
 ```
@@ -202,40 +205,73 @@ dotnet ef database update
 ### Project Structure
 
 ```
-Aristotle_Project/
-├── Application/          # Application services and logic
-│   └── Service/
-│       ├── IUserService.cs
-│       └── UserService.cs
-├── Controllers/          # API controllers
-│   └── UserController.cs
-├── Domain/              # Domain entities and interfaces
-│   ├── Entities/
-│   │   └── User.cs
-│   ├── Exceptions/
-│   └── Interfaces/
-├── Infrastructure/      # Data access and external concerns
-│   ├── ApplicationDbContext.cs
-│   ├── Data/
-│   │   └── Repositories/
-│   ├── Exceptions/
-│   └── Middleware/
-├── Migrations/         # EF Core migrations
-└── Program.cs          # Application entry point
-
-Tests/
-├── Application/
-│   └── Controllers/
-│       └── UserControllerTests.cs
-├── Builders/
-│   └── UserBuilder.cs
-├── Config/
-├── Domain/
-│   └── Entities/
-│       └── UserTests.cs
-├── Infrastructure/
-│   └── ApplicationDbContextTests.cs
-└── Aristotle.UnitTests.csproj  # Unit tests project
+Aristotle_Study/
+├── Aristotle_Study.sln          # Solution file
+├── coverlet.runsettings         # Code coverage settings
+├── Dockerfile                   # Docker configuration
+├── global.json                  # .NET SDK version
+├── README.md                    # This file
+├── UserService/                 # Main ASP.NET Core Web API project
+│   ├── appsettings.Development.json
+│   ├── appsettings.json
+│   ├── Program.cs
+│   ├── UserService.csproj
+│   ├── Application/             # Application services and logic
+│   │   ├── MappingProfile.cs
+│   │   ├── UserValidator.cs
+│   │   ├── DTOs/
+│   │   ├── Exceptions/
+│   │   └── Service/
+│   ├── Controllers/             # API controllers
+│   │   └── UserController.cs
+│   ├── Domain/                  # Domain entities and interfaces
+│   │   ├── Entities/
+│   │   ├── Exceptions/
+│   │   └── Interfaces/
+│   ├── Infrastructure/          # Data access and external concerns
+│   │   ├── ApplicationDbContext.cs
+│   │   ├── Data/
+│   │   ├── Exceptions/
+│   │   └── Middleware/
+│   ├── bin/
+│   └── obj/
+├── UserServiceTests/            # Unit tests for UserService
+│   ├── UserService.UnitTests.csproj
+│   ├── Application/
+│   │   ├── MappingProfileTests.cs
+│   │   ├── UserValidatorTests.cs
+│   │   ├── Controllers/
+│   │   ├── DTOs/
+│   │   └── Service/
+│   ├── Builders/
+│   │   └── UserBuilder.cs
+│   ├── Config/
+│   │   └── TestConfig.cs
+│   ├── Domain/
+│   │   ├── Entities/
+│   │   └── Exceptions/
+│   ├── Infrastructure/
+│   │   ├── ApplicationDbContextTests.cs
+│   │   ├── Data/
+│   │   └── Middleware/
+│   ├── bin/
+│   └── obj/
+├── Tests/                       # Additional test project
+│   ├── bin/
+│   └── obj/
+├── ISTQB/                       # ISTQB study materials
+│   ├── StartHere.md
+│   └── 1_Fundamentals-Of-Testing/
+│       └── 1_Fundamentals.md
+├── bruno/                       # API testing with Bruno
+│   └── UserService API/
+│       ├── bruno.json
+│       ├── collection.bru
+│       ├── environments/
+│       └── User API Regression Test/
+└── Aristotle_Project/           # Legacy project directory
+    ├── bin/
+    └── obj/
 ```
 
 ### Testing Strategy
