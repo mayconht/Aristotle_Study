@@ -199,4 +199,31 @@ public class UserController : ControllerBase
         // Return OK even if no users exist - an empty collection is still a valid response
         return Ok(_mapper.Map<IEnumerable<UserResponseDto>>(users));
     }
+    
+    //Wipe Database if development environment
+    /// <summary>
+    /// Wipes the entire user database. This action is irreversible and should only be used in development environments.
+    /// </summary>
+    /// <returns>204 No Content if the database was wiped successfully.</returns>
+    /// <response code="204">Database wiped successfully.</response>
+    /// <response code="403">Forbidden: This action is not allowed in the current environment.</response>
+    /// <response code="500">Internal server error occurred.</response>
+    [HttpDelete("wipe")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> WipeDatabase()
+    {
+        _logger.LogInformation("Received request to wipe the user database");
+        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+        if (!isDevelopment)
+        {
+            _logger.LogWarning("Attempt to wipe database in non-development environment");
+            return Forbid("Wiping the database is only allowed in development environments.");
+        }
+
+        await _userService.WipeDatabaseAsync();
+        _logger.LogInformation("Successfully wiped the user database");
+        return NoContent();
+    }
 }
