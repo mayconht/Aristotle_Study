@@ -27,7 +27,16 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Cache Bruno CLI
+      uses: actions/cache@v4
+      id: cache-bruno
+      with:
+        path: /usr/local/lib/node_modules/@usebruno
+        key: ${{ runner.os }}-bruno-cli-${{ hashFiles('package-lock.json') }}
+        restore-keys: ${{ runner.os }}-bruno-cli-
+
     - name: Install Bruno CLI
+      if: steps.cache-bruno.outputs.cache-hit != 'true'
       run: npm install -g @usebruno/cli
 
     - name: Set environment variables
@@ -58,7 +67,8 @@ jobs:
         APP_PORT: ${{ env.APP_PORT }}
       run: |
         mkdir -p bruno_results
-        npx @usebruno/cli run "UserService/bruno/UserService API/collection.bru" --env-file "UserService/bruno/UserService API/environments/development.bru" --reporter-html bruno_results/report.html --reporter-junit bruno_results/report.xml
+        cd "UserService/bruno/UserService API"
+        npx @usebruno/cli run collection.bru --env-file environments/development.bru --reporter-html ../../../bruno_results/report.html --reporter-junit ../../../bruno_results/report.xml
 
     - name: Log in to Docker Hub
       if: success()
