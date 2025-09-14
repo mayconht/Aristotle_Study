@@ -1,0 +1,25 @@
+meta {
+  name: Deletes a user from the system by their unique identifier.
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/User/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{userId}}
+}
+
+assert {
+  res.status: eq 204
+  res.body: isEmpty
+}
+
+script:pre-request {
+  
+  
+}

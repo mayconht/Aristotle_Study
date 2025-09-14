@@ -1,0 +1,47 @@
+meta {
+  name: Creates a new user in the system.
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/User
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "{{generatedFullName}}",
+    "email": "{{generatedEmail}}",
+    "dateOfBirth": "{{userDobTest}}"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body: isJson
+  res.body.name: eq {{generatedFullName}}
+  res.body.email: eq {{generatedEmail}}
+  res.body.id: isNotEmpty
+  ~res.body.dateOfBirth: isNotEmpty
+}
+
+script:pre-request {
+  const email = bru.interpolate('{{$randomEmail}}');
+  const fullName =  bru.interpolate('{{$randomFullName}}');
+  
+  bru.setVar("generatedEmail", email);
+  bru.setVar("generatedFullName", fullName);
+  
+}
+
+script:post-response {
+  const body = res.getBody();
+  
+  bru.setVar("userId", body.id);
+  bru.setVar("userName", body.name);
+  bru.setVar("userEmail", body.email);
+  bru.setVar("userDoB", body.dateOfBirth);
+  
+}

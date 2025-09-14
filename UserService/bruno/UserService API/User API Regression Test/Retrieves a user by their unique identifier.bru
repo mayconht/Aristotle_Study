@@ -1,0 +1,23 @@
+meta {
+  name: Retrieves a user by their unique identifier.
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/User/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: {{userId}}
+}
+
+assert {
+  res.body: isJson
+  res.body.email: eq {{newGeneratedEmail}}
+  res.body.name: eq {{newGeneratedFullName}}
+  res.body.dateOfBirth: eq {{userDoB}}
+  res.body.id: eq {{userId}}
+}
