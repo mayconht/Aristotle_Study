@@ -3,6 +3,7 @@
 <div align="center">
 
 [![Build, Test and Analyze](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml)
+[![API tests](https://github.com/mayconht/Aristotle_Study/actions/workflows/bruno_tests.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/bruno_tests.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
