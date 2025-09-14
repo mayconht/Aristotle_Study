@@ -20,7 +20,7 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "APP_PORT=8080" >> $GITHUB_ENV
+        echo "APP_PORT=3000" >> $GITHUB_ENV
         echo "USE_SQLITE=true" >> $GITHUB_ENV
 
     - name: Build Docker image

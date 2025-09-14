@@ -70,6 +70,11 @@ jobs:
           /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*,**/*.UnitTests/**/*" \
           /d:sonar.exclusions="**/Tests/**/*,**/bin/**,**/obj/**,**/Migrations/**,**/*.Designer.cs,**/Program.cs"
 
+    - name: Set environment variables
+      run: |
+        echo "APP_PORT=3000" >> $GITHUB_ENV
+        echo "USE_SQLITE=true" >> $GITHUB_ENV
+        
     - name: Build
       run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
 
