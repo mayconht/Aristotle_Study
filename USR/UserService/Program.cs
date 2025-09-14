@@ -42,7 +42,7 @@ DotNetEnv.Env.Load("../.env");
 
 void ConfigureDatabase(WebApplicationBuilder internalBuilder)
 {
-    var useSqlite = string.Equals(Environment.GetEnvironmentVariable("USE_SQLITE") , "true", StringComparison.OrdinalIgnoreCase);
+    var useSqlite = string.Equals(Environment.GetEnvironmentVariable("USE_SQLITE"), "true", StringComparison.OrdinalIgnoreCase);
 
     if (useSqlite)
     {
