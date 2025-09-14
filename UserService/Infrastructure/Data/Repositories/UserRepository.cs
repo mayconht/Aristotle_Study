@@ -219,25 +219,41 @@ public class UserRepository : IUserRepository
         try
         {
             _logger.LogDebug("Deleting user with ID: {UserId}", id);
-
             var user = await GetByIdAsync(id);
             if (user == null)
             {
                 _logger.LogDebug("User with ID {UserId} not found for deletion", id);
                 return false;
             }
-
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-
             _logger.LogDebug("Successfully deleted user with ID: {UserId}", id);
             return true;
         }
         catch (Exception ex) when (ex is not DatabaseException)
         {
             _logger.LogError(ex, "Database error occurred while deleting user with ID: {UserId}", id);
-            throw new DatabaseException(DeleteOperation, TableName, $"Failed to delete user with ID: {id}",
-                ex.ToString());
+            throw new DatabaseException(nameof(DeleteAsync), nameof(User), $"Failed to delete user with ID: {id}", ex.ToString());
+        }
+    }
+
+    /// <summary>
+    /// Wipes all data from the user database. Primarily used for testing purposes.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="DatabaseException"></exception>
+    public Task WipeDatabaseAsync()
+    {
+        try
+        {
+            _logger.LogWarning("Wiping all user data from the database. This operation is irreversible.");
+            _context.Users.RemoveRange(_context.Users);
+            return _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Database error occurred while wiping user database");
+            throw new DatabaseException(nameof(WipeDatabaseAsync), nameof(User), "Failed to wipe user database", ex.ToString());
         }
     }
 }

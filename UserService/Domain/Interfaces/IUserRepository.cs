@@ -49,4 +49,10 @@ public interface IUserRepository
     /// <param name="id"></param>
     /// <returns></returns>
     Task<bool> DeleteAsync(Guid id);
+
+    /// <summary>
+    /// Wipes all data from the user database. Primarily used for testing purposes.
+    /// </summary>
+    /// <returns></returns>
+    Task WipeDatabaseAsync();
 }
