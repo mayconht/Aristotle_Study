@@ -16,6 +16,10 @@ jobs:
   build-test-analyze:
     name: Build, Test and Analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     
     env:
       CI: true
@@ -74,7 +78,7 @@ jobs:
       run: |
         echo "APP_PORT=3000" >> $GITHUB_ENV
         echo "USE_SQLITE=true" >> $GITHUB_ENV
-        
+
     - name: Build
       run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
 
@@ -88,6 +92,19 @@ jobs:
           --logger trx \
           --settings coverlet.runsettings \
           --verbosity normal
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: TestResults/**/*.trx
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
 
     - name: Move coverage file and display details
       run: |
