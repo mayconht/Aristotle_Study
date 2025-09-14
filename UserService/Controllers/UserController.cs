@@ -155,24 +155,20 @@ public class UserController : ControllerBase
     /// <param name="id">The unique identifier of the user to delete.</param>
     /// <returns>204 No Content if deleted successfully, 404 Not Found if user doesn't exist.</returns>
     /// <response code="204">User deleted successfully.</response>
-    /// <response code="400">Invalid user ID provided.</response>
     /// <response code="404">User not found.</response>
     /// <response code="500">Internal server error occurred.</response>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
         _logger.LogInformation("Received request to delete user with ID: {UserId}", id);
 
-        var deleted = await _userService.DeleteUserAsync(id);
-
-        if (!deleted)
+        if (!await _userService.DeleteUserAsync(id))
         {
             _logger.LogInformation("User with ID {UserId} not found for deletion", id);
-            return NotFound($"User with ID {id} was not found.");
+            return NotFound(new { Message = $"User with ID {id} not found." });
         }
 
         _logger.LogInformation("Successfully deleted user with ID: {UserId}", id);
