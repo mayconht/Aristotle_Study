@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY UserService/UserService.csproj UserService/
+COPY USR/UserService/UserService.csproj UserService/
 RUN dotnet restore UserService/UserService.csproj
 
-COPY UserService/ UserService/
+COPY USR/UserService/ UserService/
 WORKDIR /src/UserService
 RUN dotnet build UserService.csproj -c Release -o /app/build
 
