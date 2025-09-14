@@ -40,7 +40,7 @@ public class UserRepository : IUserRepository
             _logger.LogDebug("Retrieving user with ID: {UserId}", id);
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-            _logger.LogDebug(user == null ? "User with ID {UserId} not found" : "Successfully retrieved user with ID: {UserId}", id);
+        _logger.LogDebug("Retrieving user with ID {UserId} completed. Found: {Found}", id, user != null);
 
             return user;
         }
