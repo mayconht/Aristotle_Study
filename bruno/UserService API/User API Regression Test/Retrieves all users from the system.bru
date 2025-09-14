@@ -1,0 +1,18 @@
+meta {
+  name: Retrieves all users from the system.
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/User
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body: isArray
+  res.body[0].email: eq {{userEmail}}
+  res.body[0].name: eq {{userName}}
+  res.body[0].id: isString
+}

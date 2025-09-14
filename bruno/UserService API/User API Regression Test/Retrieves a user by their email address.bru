@@ -1,0 +1,22 @@
+meta {
+  name: Retrieves a user by their email address.
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/User/email/:email
+  body: none
+  auth: inherit
+}
+
+params:path {
+  email: {{userEmail}}
+}
+
+assert {
+  res.body: isJson
+  res.body.email: eq {{userEmail}}
+  res.body.name: eq {{userName}}
+  res.body.id: eq {{userId}}
+}

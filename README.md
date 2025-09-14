@@ -3,6 +3,7 @@
 <div align="center">
 
 [![Build, Test and Analyze](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/build-test-analyze.yml)
+[![API tests](https://github.com/mayconht/Aristotle_Study/actions/workflows/bruno_tests.yml/badge.svg)](https://github.com/mayconht/Aristotle_Study/actions/workflows/bruno_tests.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mayconht_Aristotle_Study&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mayconht_Aristotle_Study)
@@ -254,6 +255,26 @@ Test frameworks used:
 - Moq for mocking dependencies
 - Bogus for generating fake test data
 - Verify for snapshot testing
+
+### API Testing with Bruno
+
+The project includes API testing using Bruno, a CLI tool for testing APIs. The test collection is located in the `bruno/UserService API/` directory. To execute the tests, follow these steps:
+
+1. **Install Bruno CLI**:
+   ```bash
+   npm install -g @usebruno/cli
+   ```
+
+2. **Run the Tests**:
+   ```bash
+   bruno run bruno/UserService\ API/collection.bru
+   ```
+
+3. **View Reports**:
+   - Test results will be generated in the specified output directory if configured.
+
+Bruno is also integrated into the CI/CD pipeline to ensure API functionality during automated builds.
+To understand more about this outstanding tool, visit the [Bruno Documentation](https://docs.usebruno.com/).
 
 ### Contributing
 

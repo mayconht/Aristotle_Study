@@ -11,7 +11,7 @@
           <Exclude>[*.Tests]*,[*.UnitTests]*,[*]*.Migrations.*,[*]*Program</Exclude>
           
           <!-- Include the main project -->
-          <Include>[Aristotle]*</Include>
+          <Include>[Aristotle]*,[UserService]*</Include>
           
           <!-- Exclude methods and classes marked with these attributes -->
           <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
