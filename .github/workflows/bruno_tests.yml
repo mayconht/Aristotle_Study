@@ -67,8 +67,8 @@ jobs:
           --reporters html junit \
           --reporter-options html-export=bruno_results/report.html,junit-export=bruno_results/report.xml
 
-    - name: Upload test artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: bruno-test-results
-        path: bruno_results
+#    - name: Upload test artifacts
+#      uses: actions/upload-artifact@v
+#      with:
+#        name: bruno-test-results
+#        path: bruno_results
