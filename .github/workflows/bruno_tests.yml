@@ -15,6 +15,9 @@ jobs:
       contents: read
       checks: write
       pull-requests: write
+    env:
+      BRUNO_PATH: bruno/UserService API
+      RESULTS_REL_PATH: /../../bruno_results
 
     steps:
     - name: Checkout code with full commit SHA
@@ -67,8 +70,8 @@ jobs:
         APP_PORT: ${{ env.APP_PORT }}
       run: |
         mkdir -p bruno_results
-        cd "bruno/UserService API"
-        npx @usebruno/cli run . --env-file environments/development.bru --tags=Regression --reporter-html ../../../bruno_results/report.html --reporter-junit ../../../bruno_results/report.xml
+        cd "$BRUNO_PATH"
+        npx @usebruno/cli run . --env-file environments/development.bru --tags=Regression --reporter-html "$RESULTS_REL_PATH/report.html" --reporter-junit "$RESULTS_REL_PATH/report.xml"
 
     - name: Log in to Docker Hub
       if: success()
