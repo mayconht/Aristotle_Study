@@ -23,6 +23,7 @@ public static class MiddlewareConfigurator
                 context.Response.Redirect("/swagger");
                 return;
             }
+
             await next();
         });
         internalApp.UseMiddleware<GlobalExceptionHandlingMiddleware>();

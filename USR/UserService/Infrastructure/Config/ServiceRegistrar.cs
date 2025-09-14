@@ -2,6 +2,9 @@ using Aristotle.Application.Service;
 using Aristotle.Domain.Interfaces;
 using Aristotle.Infrastructure.Data.Repositories;
 using Aristotle.Application;
+using Aristotle.Infrastructure;
+using Aristotle.Infrastructure.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Aristotle.Infrastructure.Config;
 
@@ -21,14 +24,7 @@ public static class ServiceRegistrar
         internalBuilder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
 
         internalBuilder.Services.AddHealthChecks()
-            .AddCheck("Liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy())
-            .AddCheck("Database", () =>
-            {
-                using var scope = internalBuilder.Services.BuildServiceProvider().CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                return dbContext.Database.CanConnect()
-                    ? Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy()
-                    : Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Unhealthy("Cannot connect to the database.");
-            });
+            .AddCheck("Liveness", () => HealthCheckResult.Healthy("Service is running"))
+            .AddCheck<DatabaseHealthCheck>("Database");
     }
 }
