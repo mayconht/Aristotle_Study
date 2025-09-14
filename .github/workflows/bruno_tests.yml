@@ -67,7 +67,7 @@ jobs:
         APP_PORT: ${{ env.APP_PORT }}
       run: |
         mkdir -p bruno_results
-        cd "UserService/bruno/UserService API"
+        cd "bruno/UserService API"
         npx @usebruno/cli run . --env-file environments/development.bru --tags=Regression --reporter-html ../../../bruno_results/report.html --reporter-junit ../../../bruno_results/report.xml
 
     - name: Log in to Docker Hub
