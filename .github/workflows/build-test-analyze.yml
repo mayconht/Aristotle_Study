@@ -16,6 +16,10 @@ jobs:
   build-test-analyze:
     name: Build, Test and Analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     
     env:
       CI: true
@@ -67,26 +71,47 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.projectBaseDir="$GITHUB_WORKSPACE" \
           /d:sonar.cs.opencover.reportsPaths="./coverage.opencover.xml" \
-          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*" \
+          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*,**/*.UnitTests/**/*" \
           /d:sonar.exclusions="**/Tests/**/*,**/bin/**,**/obj/**,**/Migrations/**,**/*.Designer.cs,**/Program.cs"
+
+    - name: Set environment variables
+      run: |
+        echo "APP_PORT=3000" >> $GITHUB_ENV
+        echo "USE_SQLITE=true" >> $GITHUB_ENV
 
     - name: Build
       run: dotnet build Aristotle_Study.sln --configuration Release --no-restore
 
     - name: Test with coverage
       run: |
-        dotnet test Tests/Aristotle.UnitTests.csproj \
+        dotnet test UserServiceTests/UserService.UnitTests.csproj \
           --configuration Release \
           --no-build \
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/ \
           --logger trx \
-          --settings coverlet.runsettings
+          --settings coverlet.runsettings \
+          --verbosity normal
 
-    - name: Move coverage file
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: TestResults/**/*.trx
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+
+    - name: Move coverage file and display details
       run: |
+        mkdir -p ./coverage
         find ./TestResults -name "coverage.opencover.xml" -exec cp {} ./coverage.opencover.xml \;
-        ls -la ./coverage.opencover.xml
+        ls -la ./coverage.opencover.xml || echo "Coverage file not found"
+        find ./TestResults -type f -name "*.xml" | grep -i coverage || echo "No coverage files found in TestResults"
 
     - name: End SonarCloud analysis
       env:
