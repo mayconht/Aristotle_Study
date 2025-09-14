@@ -84,7 +84,7 @@ jobs:
 
     - name: Test with coverage
       run: |
-        dotnet test UserServiceTests/UserService.UnitTests.csproj \
+        dotnet test USR/UserServiceTests/UserService.UnitTests.csproj \
           --configuration Release \
           --no-build \
           --collect:"XPlat Code Coverage" \

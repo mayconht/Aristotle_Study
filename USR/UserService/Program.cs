@@ -33,9 +33,16 @@ builder.Services.AddControllers();
 
 DotNetEnv.Env.Load("../.env");
 
+//------------------------------------ Configuration Methods ------------------------------------ //
+
+//TODO This is ugly as hell, needs to be cleaned up and moved to proper files
+// also the configuration for the database might not be working as intended
+// we should probably use a factory pattern or something similar to handle multiple database providers
+// also the connection string should be validated and not just assumed to be correct
+
 void ConfigureDatabase(WebApplicationBuilder internalBuilder)
 {
-    var useSqlite = Environment.GetEnvironmentVariable("USE_SQLITE")?.ToLower() == "true";
+    var useSqlite = string.Equals(Environment.GetEnvironmentVariable("USE_SQLITE") , "true", StringComparison.OrdinalIgnoreCase);
 
     if (useSqlite)
     {
@@ -47,21 +54,20 @@ void ConfigureDatabase(WebApplicationBuilder internalBuilder)
 
     var connectionString = internalBuilder.Configuration.GetConnectionString("DefaultConnection");
 
-    if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("Host="))
+    switch (string.IsNullOrEmpty(connectionString))
     {
-        internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString));
-        Console.WriteLine("Using PostgreSQL database.");
-    }
-    else if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("Data Source="))
-    {
-        internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(connectionString));
-        Console.WriteLine("Using SQLite database from connection string.");
-    }
-    else
-    {
-        throw new InvalidOperationException("Unsupported or missing connection string format for DefaultConnection.");
+        case true when connectionString != null && connectionString.StartsWith("Host="):
+            internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(connectionString));
+            Console.WriteLine("Using PostgreSQL database.");
+            break;
+        case false when connectionString.StartsWith("Data Source="):
+            internalBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite(connectionString));
+            Console.WriteLine("Using SQLite database from connection string.");
+            break;
+        default:
+            throw new InvalidOperationException("Unsupported or missing connection string format for DefaultConnection.");
     }
 }
 
