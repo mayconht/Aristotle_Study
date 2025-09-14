@@ -2,7 +2,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY UserService/UserService.csproj UserService/
 RUN dotnet restore UserService/UserService.csproj
-COPY . .
+
+COPY UserService/ UserService/
 WORKDIR /src/UserService
 RUN dotnet build UserService.csproj -c Release -o /app/build
 
@@ -13,16 +14,13 @@ RUN dotnet publish UserService.csproj -c Release -o /app/publish /p:UseAppHost=f
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Create non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 COPY --from=publish /app/publish .
 
-# Set correct ownership and permissions
 RUN chown -R appuser:appuser /app && \
     chmod -R 755 /app
 
-# Switch to non-root user
 USER appuser
 
 EXPOSE 3000
