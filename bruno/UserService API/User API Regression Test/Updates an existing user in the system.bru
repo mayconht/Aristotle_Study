@@ -22,6 +22,14 @@ body:json {
   }
 }
 
+assert {
+  res.status: eq 200
+  res.body: isJson
+  res.body.id: eq {{userId}}
+  res.body.email: eq {{newGeneratedEmail}}
+  res.body.name: eq {{newGeneratedFullName}}
+}
+
 script:pre-request {
   const email = bru.interpolate('{{$randomEmail}}');
   const fullName =  bru.interpolate('{{$randomFullName}}');

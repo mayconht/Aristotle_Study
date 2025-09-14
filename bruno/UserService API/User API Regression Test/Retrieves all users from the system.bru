@@ -15,4 +15,6 @@ assert {
   res.body[0].email: eq {{userEmail}}
   res.body[0].name: eq {{userName}}
   res.body[0].id: isString
+  res.status: eq 200
+  res.body[0]: isJson
 }

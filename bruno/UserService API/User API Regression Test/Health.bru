@@ -18,6 +18,9 @@ assert {
   res.body.checks[0].error: isNull
   res.body.status: eq Healthy
   res.body.duration: isNumber
+  res.body.checks[1].name: eq Database
+  res.body.checks[1].status: eq Healthy
+  res.body.checks[1].error: isNull
 }
 
 settings {

@@ -339,3 +339,4 @@ This is an educational project, but contributions are welcome! Areas for improve
 
 *This project serves as a learning exercise comparing C#/.NET development patterns with Java/Spring Boot, focusing on
 Clean Architecture principles and modern development practices.*
+
