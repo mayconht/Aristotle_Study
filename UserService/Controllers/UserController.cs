@@ -196,7 +196,6 @@ public class UserController : ControllerBase
         return Ok(_mapper.Map<IEnumerable<UserResponseDto>>(users));
     }
     
-    //Wipe Database if development environment
     /// <summary>
     /// Wipes the entire user database. This action is irreversible and should only be used in development environments.
     /// </summary>
