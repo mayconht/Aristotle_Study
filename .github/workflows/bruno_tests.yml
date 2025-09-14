@@ -1,4 +1,4 @@
-﻿name: Run Bruno Tests
+﻿name: API tests
 
 on:
   push:
