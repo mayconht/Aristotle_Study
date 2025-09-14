@@ -259,6 +259,16 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Wipes all data from the user database. Primarily used for testing purposes.
+    /// </summary>
+    /// <returns></returns>
+    public Task WipeDatabaseAsync()
+    {
+        _logger.LogWarning("Wiping all data from the user database. This operation is irreversible and should only be used for testing purposes.");
+        return _userRepository.WipeDatabaseAsync();
+    }
+
     //-------------------------------------------------Business Logic-------------------------------------------------//
 
     //This should be moved to a separate validation service or utility class

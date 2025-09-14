@@ -47,4 +47,10 @@ public interface IUserService
     /// <param name="id">The unique identifier of the user to delete.</param>
     /// <returns>True if the user was deleted; otherwise, false.</returns>
     Task<bool> DeleteUserAsync(Guid id);
+
+    /// <summary>
+    /// Wipes all data from the user database. Primarily used for testing purposes.
+    /// </summary>
+    /// <returns></returns>
+    Task WipeDatabaseAsync();
 }
