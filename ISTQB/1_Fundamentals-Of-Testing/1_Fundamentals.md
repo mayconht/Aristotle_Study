@@ -2,7 +2,7 @@
 
 ## What is Software Testing?
 Software testing is a set of activities to discover defects and evaluate the quality of software work products. A common misconception is that testing is only about
-executing tests to find defects. Testing also includes activities such as planning, designing, and reporting. Which aligns with the SDLC.
+executing tests to find defects. Testing also includes activities such as planning, designing, and reporting, which aligns with the SDLC.
 
 Another misconception is that testing can prove the absence of defects. Testing can only show the presence of defects, not their absence. Also, the testing does not 
 entirely focus on validating the test object, but also whether the system meets the users' needs and requirements, validations and operational environment.
