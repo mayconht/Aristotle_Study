@@ -28,8 +28,8 @@ DotNetEnv.Env.Load("../.env");
 
 //------------------------------------ Main Program Execution ------------------------------------ //
 DatabaseConfigurator.ConfigureDatabase(builder);
-ServiceRegistrar.RegisterServices(builder);
 
+RegisterService.Initialize(builder);
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

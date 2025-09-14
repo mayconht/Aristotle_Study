@@ -128,6 +128,24 @@ dotnet test --collect:"XPlat Code Coverage"
 dotnet test UserServiceTests/UserService.UnitTests.csproj
 ```
 
+### Code Coverage
+
+The project aims to maintain a code coverage of at least 85% to ensure reliability and maintainability. We use Coverlet for measuring code coverage and SonarCloud for visualization.
+
+To run tests with coverage and generate a coverage report:
+
+```bash
+# Run tests with coverage and output as cobertura format
+dotnet test --collect:"XPlat Code Coverage" --results-directory:./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+# View the coverage report
+# You can use ReportGenerator to convert the coverage file to HTML
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator "-reports:./TestResults/**/coverage.cobertura.xml" "-targetdir:./CoverageReport" -reporttypes:Html
+```
+
+The coverage report helps identify areas that need additional testing to meet our 85% coverage target.
+
 ### SonarCloud Integration
 
 The project is integrated with SonarCloud for code quality analysis. To configure SonarCloud properly:
@@ -339,4 +357,3 @@ This is an educational project, but contributions are welcome! Areas for improve
 
 *This project serves as a learning exercise comparing C#/.NET development patterns with Java/Spring Boot, focusing on
 Clean Architecture principles and modern development practices.*
-

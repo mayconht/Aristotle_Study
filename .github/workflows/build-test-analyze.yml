@@ -71,7 +71,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.projectBaseDir="$GITHUB_WORKSPACE" \
           /d:sonar.cs.opencover.reportsPaths="./coverage.opencover.xml" \
-          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*,**/*.UnitTests/**/*" \
+          /d:sonar.coverage.exclusions="**/Program.cs,**/Migrations/**/*,**/Tests/**/*,**/*.UnitTests/**/*,**/Infrastructure/Config/**/*" \
           /d:sonar.exclusions="**/Tests/**/*,**/bin/**,**/obj/**,**/Migrations/**,**/*.Designer.cs,**/Program.cs"
 
     - name: Set environment variables
