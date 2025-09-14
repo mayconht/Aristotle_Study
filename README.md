@@ -313,6 +313,9 @@ follow these steps:
 Bruno is also integrated into the CI/CD pipeline to ensure API functionality during automated builds.
 To understand more about this outstanding tool, visit the [Bruno Documentation](https://docs.usebruno.com/).
 
+You can also download the Bruno extension for [VS Code](https://marketplace.visualstudio.com/items?itemName=usebruno.bruno) or [JetBrains IDEs](https://plugins.jetbrains.com/plugin/20449-bruno).
+or even download the [Bruno Desktop App](https://www.usebruno.com/download).
+
 ### Contributing
 
 This is an educational project, but contributions are welcome! Areas for improvement include:
