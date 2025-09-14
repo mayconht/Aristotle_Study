@@ -294,7 +294,8 @@ Test frameworks used:
 
 ### API Testing with Bruno
 
-The project includes API testing using Bruno, a CLI tool for testing APIs. The test collection is located in the `bruno/UserService API/` directory. To execute the tests, follow these steps:
+The project includes API testing using Bruno, a CLI tool for testing APIs. The test collection is located in the `bruno/UserService API/` directory. To execute the tests,
+follow these steps:
 
 1. **Install Bruno CLI**:
    ```bash
@@ -307,7 +308,7 @@ The project includes API testing using Bruno, a CLI tool for testing APIs. The t
    ```
 
 3. **View Reports**:
-   - Test results will be generated in the specified output directory if configured.
+    - Test results will be generated in the specified output directory if configured.
 
 Bruno is also integrated into the CI/CD pipeline to ensure API functionality during automated builds.
 To understand more about this outstanding tool, visit the [Bruno Documentation](https://docs.usebruno.com/).

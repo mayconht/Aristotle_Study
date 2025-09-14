@@ -40,7 +40,7 @@ public class UserRepository : IUserRepository
             _logger.LogDebug("Retrieving user with ID: {UserId}", id);
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-        _logger.LogDebug("Retrieving user with ID {UserId} completed. Found: {Found}", id, user != null);
+            _logger.LogDebug("Retrieving user with ID {UserId} completed. Found: {Found}", id, user != null);
 
             return user;
         }
@@ -146,6 +146,7 @@ public class UserRepository : IUserRepository
                 _logger.LogWarning("Attempted to update non-existent user with ID: {UserId}", user.Id);
                 throw new RepositoryException(nameof(UserRepository), user.Id, $"User with ID {user.Id} not found for update");
             }
+
             _context.Entry(existingUser).CurrentValues.SetValues(user);
             await _context.SaveChangesAsync();
             _logger.LogDebug("Successfully updated user with ID: {UserId}", user.Id);
@@ -191,6 +192,7 @@ public class UserRepository : IUserRepository
                 _logger.LogDebug("User with ID {UserId} not found for deletion", id);
                 return false;
             }
+
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             _logger.LogDebug("Successfully deleted user with ID: {UserId}", id);

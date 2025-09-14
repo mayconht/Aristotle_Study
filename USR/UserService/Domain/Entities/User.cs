@@ -13,7 +13,6 @@ namespace Aristotle.Domain.Entities;
 [Table("Users")]
 public class User
 {
-
     /// <summary>
     ///  Constructor for User entity.
     /// </summary>
@@ -43,6 +42,4 @@ public class User
     /// This property is optional and can be null.
     /// </summary>
     public DateTime? DateOfBirth { get; set; }
-
-
 }

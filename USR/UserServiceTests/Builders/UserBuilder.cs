@@ -128,7 +128,7 @@ public class UserBuilder
     /// </summary>
     public User Build()
     {
-        return new User()
+        return new User
         {
             Id = _id,
             Name = _name!,

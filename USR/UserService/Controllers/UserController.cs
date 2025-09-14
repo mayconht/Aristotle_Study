@@ -195,7 +195,7 @@ public class UserController : ControllerBase
         // Return OK even if no users exist - an empty collection is still a valid response
         return Ok(_mapper.Map<IEnumerable<UserResponseDto>>(users));
     }
-    
+
     /// <summary>
     /// Wipes the entire user database. This action is irreversible and should only be used in development environments.
     /// </summary>

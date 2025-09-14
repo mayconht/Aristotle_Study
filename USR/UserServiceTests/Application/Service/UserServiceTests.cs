@@ -195,8 +195,8 @@ public class UserServiceTests
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
-        
-        
+
+
         _loggerMock.Verify(
             x => x.Log(
                 LogLevel.Debug,
