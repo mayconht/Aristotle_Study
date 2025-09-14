@@ -5,13 +5,19 @@ using Aristotle.Application.Service;
 using Aristotle.Domain.Interfaces;
 using Aristotle.Infrastructure;
 using Aristotle.Infrastructure.Data.Repositories;
-using Aristotle.Infrastructure.Exceptions;
 using Aristotle.Infrastructure.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text.Json;
 
+
+//TODO This class is a mess and needs to be cleaned up and moved to proper files
+// It is doing too many things at once and is hard to read and maintain
+// I should move the configuration to separate files and use proper patterns
 var builder = WebApplication.CreateBuilder(args);
-var openBrowser = builder.Configuration.GetValue<bool>("Swagger:OpenBrowser", false);
+var openBrowser = builder.Configuration.GetValue("Swagger:OpenBrowser", false);
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -25,62 +31,68 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 
-// Here I am super lazy but if you want to properly make it interchangeable,
-// you can use a configuration file or environment variables to set the connection string.
-// Database provider selection based on connection string
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (connectionString != null && (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://")))
+DotNetEnv.Env.Load("../.env");
+
+void ConfigureDatabase(WebApplicationBuilder builder)
 {
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
-else if (connectionString != null && connectionString.StartsWith("Data Source="))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString));
-}
-else
-{
-    throw new InvalidOperationException("Unsupported or missing connection string format for DefaultConnection.");
+    var connectionString = $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
+                          $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
+                          $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
+                          $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
+                          $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        throw new InvalidOperationException("Connection string could not be resolved from environment variables.");
+    }
+
+    if (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://"))
+    {
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
+    }
+    else if (connectionString.StartsWith("Data Source="))
+    {
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite(connectionString));
+    }
+    else
+    {
+        throw new InvalidOperationException("Unsupported or missing connection string format for DefaultConnection.");
+    }
 }
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
+//------------------------------------ Main Program Execution ------------------------------------ //
+ConfigureDatabase(builder);
+RegisterServices(builder);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        await dbContext.Database.EnsureCreatedAsync();
+        await dbContext.Database.MigrateAsync();
+        Console.WriteLine("Database migrations applied successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while applying migrations: {ex.Message}");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var logger = services.GetRequiredService<ILogger<Program>>();
-
-        try
-        {
-            var context = services.GetRequiredService<ApplicationDbContext>();
-
-            logger.LogInformation("Validating if database is created and migrations are applied...");
-            await context.Database.MigrateAsync();
-            logger.LogInformation("Database initialization completed successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while creating/migrating the database: {Message}", ex.Message);
-            throw new DatabaseException(ex.Message, "N/A", "Database Initialization", ex.ToString());
-        }
-    }
-
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API v1");
         c.DocumentTitle = "UserService API Documentation";
     });
-    
-    var swaggerUrl = app.Configuration["Swagger:Url"];
+
     if (openBrowser)
     {
         _ = Task.Run(() =>
@@ -89,44 +101,58 @@ if (app.Environment.IsDevelopment())
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = swaggerUrl,
+                    FileName = app.Configuration["Swagger:Url"],
                     UseShellExecute = true
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(
-                    $"Failed to open Swagger UI in the browser. Please visit {swaggerUrl} manually. Error: {ex.Message}");
+                Console.WriteLine($"Failed to open Swagger UI in the browser. Error: {ex.Message}");
             }
         });
     }
-    else
-    {
-        Console.WriteLine($"Swagger UI is available at: {swaggerUrl}");
-    }
-
-    app.MapGet("/", context =>
-    {
-        context.Response.Redirect("/swagger/index.html");
-        return Task.CompletedTask;
-    });
 }
 
-// We are going to move this to a middleware handler or a service handler later.
-// But feels useful to register the services like this in C# 
-app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+ConfigureMiddleware(app);
 
-app.UseHttpsRedirection();
-app.MapControllers();
+await app.RunAsync();
+return;
 
-// Check if this is being called from a test environment
-// In test scenarios, we don't want to start the web server
-// This feels ugly but it works for now.
-var isTestEnvironment = builder.Configuration.GetValue<bool>("TestEnvironment:Enabled") ||
-                        args.Contains("--test") ||
-                        (Assembly.GetEntryAssembly()?.GetName().Name?.Contains("testhost") ?? false);
+void RegisterServices(WebApplicationBuilder internalBuilder)
+{
+    internalBuilder.Services.AddScoped<IUserRepository, UserRepository>();
+    internalBuilder.Services.AddScoped<IUserService, UserService>();
+    internalBuilder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
 
-if (!isTestEnvironment) await app.RunAsync();
+    internalBuilder.Services.AddHealthChecks()
+        .AddCheck("Liveness", () => HealthCheckResult.Healthy());
+}
+
+void ConfigureMiddleware(WebApplication internalApp)
+{
+    internalApp.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+    internalApp.UseHttpsRedirection();
+    internalApp.MapControllers();
+    internalApp.MapHealthChecks("/health", new HealthCheckOptions
+    {
+        ResponseWriter = async (context, report) =>
+        {
+            context.Response.ContentType = "application/json";
+            var result = JsonSerializer.Serialize(new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.Select(e => new
+                {
+                    name = e.Key,
+                    status = e.Value.Status.ToString(),
+                    error = e.Value.Exception?.Message
+                }),
+                duration = report.TotalDuration.TotalMilliseconds
+            });
+            await context.Response.WriteAsync(result);
+        }
+    });
+}
 
 /// <summary>
 /// Program class for test access
